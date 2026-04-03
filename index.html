@@ -1,643 +1,691 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>ROSORA • Sign Up | AI Recipe Chef</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>RO•SORA • Sign up for culinary AI</title>
+    <!-- Google Fonts + Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<!-- Google Fonts + Font Awesome -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f8fafc 0%, #eef2f5 100%);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+            overflow-x: hidden;
+        }
 
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        /* animated background blobs (matching gradient colors) */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,122,122,0.15) 0%, rgba(107,229,194,0.1) 80%);
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+            z-index: 0;
+            filter: blur(60px);
+        }
 
-body {
-    min-height: 100vh;
-    background: linear-gradient(145deg, #1a1a2e, #16213e, #0f3460);
-    font-family: 'Inter', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-    position: relative;
-    overflow-x: hidden;
-}
+        body::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(107,229,194,0.12) 0%, rgba(255,122,122,0.08) 80%);
+            border-radius: 50%;
+            bottom: -120px;
+            right: -120px;
+            z-index: 0;
+            filter: blur(70px);
+        }
 
-/* floating food particles animation */
-.food-particle {
-    position: absolute;
-    font-size: 2rem;
-    opacity: 0.3;
-    animation: floatFood 15s infinite linear;
-    pointer-events: none;
-}
+        /* main card */
+        .signup-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
 
-@keyframes floatFood {
-    0% {
-        transform: translateY(100vh) rotate(0deg);
-        opacity: 0;
-    }
-    10% {
-        opacity: 0.4;
-    }
-    90% {
-        opacity: 0.4;
-    }
-    100% {
-        transform: translateY(-100px) rotate(360deg);
-        opacity: 0;
-    }
-}
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
 
-/* different delays for each food */
-.food-1 { left: 5%; animation-duration: 12s; animation-delay: 0s; }
-.food-2 { left: 15%; animation-duration: 18s; animation-delay: 2s; }
-.food-3 { left: 25%; animation-duration: 14s; animation-delay: 4s; }
-.food-4 { left: 40%; animation-duration: 20s; animation-delay: 1s; }
-.food-5 { left: 55%; animation-duration: 16s; animation-delay: 3s; }
-.food-6 { left: 70%; animation-duration: 13s; animation-delay: 5s; }
-.food-7 { left: 85%; animation-duration: 19s; animation-delay: 2.5s; }
-.food-8 { left: 95%; animation-duration: 11s; animation-delay: 6s; }
+        .card-inner {
+            padding: 2rem 2rem 2.2rem;
+        }
 
-/* main card */
-.container {
-    position: relative;
-    z-index: 10;
-    width: 100%;
-    max-width: 500px;
-    background: rgba(255, 255, 255, 0.97);
-    backdrop-filter: blur(10px);
-    padding: 2rem 2rem 2.2rem;
-    border-radius: 2rem;
-    box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.2);
-    transition: transform 0.3s ease;
-}
+        /* header with brand — NEW LOGO & STYLE */
+        .brand {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
 
-.container:hover {
-    transform: translateY(-5px);
-}
+        /* custom logo container: replaces robot with food/culinary icon */
+        .brand-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem auto;
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 25px -10px rgba(255,107,107,0.4);
+            transition: transform 0.2s ease;
+        }
+        
+        .brand-logo i {
+            font-size: 2.5rem;
+            color: white;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.1));
+        }
 
-/* food logo - animated rotating plate */
-.logo-food {
-    text-align: center;
-    margin-bottom: 1rem;
-}
+        /* main wordmark: RO•SORA with dot */
+        .brand h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(120deg, #FF6B6B, #4ECDC4, #FFB347);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.1rem;
+        }
+        
+        .brand h1 .ro {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        
+        .brand h1 .dot {
+            background: linear-gradient(135deg, #4ECDC4, #FFB347);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            font-size: 2rem;
+        }
+        
+        .brand h1 .sora {
+            background: linear-gradient(135deg, #4ECDC4, #6be5c2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
 
-.food-logo-circle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 110px;
-    height: 110px;
-    background: linear-gradient(135deg, #FF6B6B, #FFB347, #4ECDC4);
-    background-size: 200% 200%;
-    border-radius: 50%;
-    box-shadow: 0 20px 30px -10px rgba(0,0,0,0.3), 0 0 0 5px rgba(255,255,255,0.3);
-    animation: plateRotate 4s ease infinite, gradientShift 3s ease infinite;
-    position: relative;
-}
+        /* tagline inspired by the image text */
+        .tagline {
+            color: #5b6e8c;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            background: rgba(255,107,107,0.08);
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            backdrop-filter: blur(2px);
+        }
+        
+        .tagline span {
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .tagline i {
+            color: #FF6B6B;
+            font-size: 0.65rem;
+        }
+        
+        .feature-strip {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem 1rem;
+            margin-top: 0.8rem;
+            margin-bottom: 1rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #2c3e66;
+        }
+        
+        .feature-strip span {
+            background: #f1f5f9;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            letter-spacing: -0.2px;
+        }
+        
+        .feature-strip i {
+            margin-right: 4px;
+            font-size: 0.65rem;
+            color: #FF6B6B;
+        }
 
-@keyframes plateRotate {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(5deg); }
-    75% { transform: rotate(-5deg); }
-}
+        /* form fields */
+        .input-group {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
 
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1rem;
+            transition: color 0.2s;
+            pointer-events: none;
+        }
 
-.food-logo-circle i {
-    font-size: 3.5rem;
-    color: white;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
-    animation: foodBounce 2s ease infinite;
-}
+        .input-group input {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 1.2rem;
+            color: #1e293b;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+            outline: none;
+        }
 
-@keyframes foodBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-}
+        .input-group input:focus {
+            border-color: #ff7a7a;
+            box-shadow: 0 0 0 3px rgba(255, 122, 122, 0.2);
+        }
 
-/* decorative food emojis around logo */
-.around-food {
-    position: absolute;
-    font-size: 1.2rem;
-    animation: spinAround 10s linear infinite;
-}
+        .input-group input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+        }
 
-/* brand title */
-.brand-title {
-    text-align: center;
-    margin-bottom: 0.2rem;
-}
+        /* password wrapper with toggle */
+        .password-wrapper {
+            position: relative;
+        }
 
-.rosora-text {
-    font-size: 2.4rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #FF6B6B, #FFB347, #4ECDC4);
-    background-size: 200% 200%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    letter-spacing: -1px;
-    animation: gradientShift 3s ease infinite;
-}
+        .toggle-pw {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 1rem;
+            z-index: 2;
+        }
 
-.tagline {
-    font-size: 0.75rem;
-    color: #e8b4b4;
-    letter-spacing: 1px;
-    font-weight: 600;
-    margin-top: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
+        .toggle-pw:hover {
+            color: #ff7a7a;
+        }
 
-.tagline span {
-    background: linear-gradient(135deg, rgba(255,107,107,0.2), rgba(78,205,196,0.2));
-    padding: 4px 12px;
-    border-radius: 30px;
-    font-size: 0.7rem;
-    color: #FFB347;
-}
+        /* password strength meter */
+        .strength-meter {
+            margin-top: 0.4rem;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
 
-/* food-themed feature badges */
-.feature-strip {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px 0 20px;
-    padding: 8px 0;
-    border-top: 2px solid rgba(255,107,107,0.3);
-    border-bottom: 2px solid rgba(78,205,196,0.3);
-}
+        .strength-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff7a7a, #6be5c2);
+            border-radius: 4px;
+            transition: width 0.25s ease;
+        }
 
-.feature-strip .badge {
-    font-size: 0.68rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #fff5f0, #ffffff);
-    padding: 6px 14px;
-    border-radius: 40px;
-    color: #FF6B6B;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    box-shadow: 0 2px 8px rgba(255,107,107,0.15);
-    transition: all 0.2s;
-    cursor: pointer;
-}
+        .strength-text {
+            font-size: 0.7rem;
+            margin-top: 0.3rem;
+            text-align: right;
+            color: #64748b;
+        }
 
-.feature-strip .badge:hover {
-    transform: scale(1.05);
-    background: linear-gradient(135deg, #FF6B6B, #FFB347);
-    color: white;
-}
+        /* confirm password match hint */
+        .match-hint {
+            font-size: 0.7rem;
+            margin-top: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: #64748b;
+        }
 
-.feature-strip .badge i { 
-    font-size: 0.75rem;
-}
+        .match-hint i {
+            font-size: 0.7rem;
+        }
 
-/* input fields with food icons */
-.input-group {
-    margin-bottom: 1rem;
-    position: relative;
-}
+        .match-hint.valid {
+            color: #10b981;
+        }
 
-.input-group i {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #FFB347;
-    font-size: 1rem;
-    pointer-events: none;
-    transition: color 0.2s;
-}
+        .match-hint.invalid {
+            color: #ef4444;
+        }
 
-.input-group input {
-    width: 100%;
-    padding: 0.85rem 1rem 0.85rem 2.8rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    background: #ffffff;
-    border: 2px solid #ffe0cc;
-    border-radius: 1.2rem;
-    color: #1a1a2e;
-    font-family: 'Inter', sans-serif;
-    transition: all 0.2s ease;
-    outline: none;
-}
+        /* signup button */
+        .signup-btn {
+            width: 100%;
+            background: linear-gradient(105deg, #ff7a7a, #6be5c2);
+            border: none;
+            padding: 0.9rem;
+            border-radius: 1.8rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 14px rgba(255, 122, 122, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+        }
 
-.input-group input:focus {
-    border-color: #FF6B6B;
-    box-shadow: 0 0 0 3px rgba(255,107,107,0.15);
-}
+        .signup-btn i {
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
 
-.input-group input::placeholder {
-    color: #d4b48c;
-    font-weight: 400;
-}
+        .signup-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.02);
+            box-shadow: 0 12px 20px -8px rgba(107, 229, 194, 0.4);
+        }
 
-/* password wrapper */
-.password-wrapper {
-    position: relative;
-}
+        .signup-btn:active {
+            transform: scale(0.98);
+        }
 
-.toggle-pw {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    color: #d4b48c;
-    cursor: pointer;
-    font-size: 1rem;
-    z-index: 2;
-}
+        /* login redirect */
+        .login-redirect {
+            text-align: center;
+            margin-top: 1.6rem;
+            color: #5b6e8c;
+            font-size: 0.9rem;
+        }
 
-.toggle-pw:hover {
-    color: #FF6B6B;
-}
+        .login-redirect a {
+            color: #ff7a7a;
+            font-weight: 600;
+            text-decoration: none;
+            margin-left: 0.2rem;
+        }
 
-/* strength meter */
-.strength-meter {
-    margin-top: 0.3rem;
-    height: 4px;
-    background: #ffe0cc;
-    border-radius: 4px;
-    overflow: hidden;
-}
+        .login-redirect a:hover {
+            text-decoration: underline;
+            color: #6be5c2;
+        }
 
-.strength-fill {
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(90deg, #FF6B6B, #FFB347, #4ECDC4);
-    border-radius: 4px;
-    transition: width 0.25s;
-}
+        /* toast message */
+        .toast-message {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            background: #1e293b;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 3rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(8px);
+            background: rgba(30, 41, 59, 0.9);
+        }
 
-.strength-text {
-    font-size: 0.65rem;
-    margin-top: 0.25rem;
-    text-align: right;
-    color: #e8b4b4;
-    font-weight: 500;
-}
+        .toast-message.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scale(1);
+        }
 
-/* match hint */
-.match-hint {
-    font-size: 0.7rem;
-    margin-top: 0.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: #e8b4b4;
-}
+        .toast-message i {
+            font-size: 1rem;
+        }
 
-.match-hint.valid {
-    color: #4ECDC4;
-}
-
-.match-hint.invalid {
-    color: #FF6B6B;
-}
-
-/* signup button */
-.btn {
-    width: 100%;
-    padding: 0.95rem;
-    border: none;
-    border-radius: 2rem;
-    background: linear-gradient(105deg, #FF6B6B, #FFB347, #4ECDC4);
-    background-size: 200% 200%;
-    animation: gradientShift 3s ease infinite;
-    color: white;
-    font-weight: 700;
-    font-size: 1rem;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    box-shadow: 0 8px 20px rgba(255,107,107,0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    margin-top: 0.5rem;
-}
-
-.btn i {
-    font-size: 1rem;
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.05);
-    box-shadow: 0 12px 25px -8px rgba(255,107,107,0.5);
-}
-
-.btn:active {
-    transform: scale(0.97);
-}
-
-/* message */
-.msg {
-    margin-top: 1rem;
-    text-align: center;
-    font-size: 0.85rem;
-    font-weight: 500;
-    min-height: 2rem;
-}
-
-/* login redirect */
-.login-redirect {
-    text-align: center;
-    margin-top: 1.3rem;
-    font-size: 0.85rem;
-    color: #e8b4b4;
-}
-
-.login-redirect a {
-    color: #FF6B6B;
-    font-weight: 600;
-    text-decoration: none;
-    margin-left: 0.2rem;
-}
-
-.login-redirect a:hover {
-    text-decoration: underline;
-    color: #4ECDC4;
-}
-
-/* footer with food icons */
-.footer-quote {
-    text-align: center;
-    font-size: 0.65rem;
-    color: #d4b48c;
-    margin-top: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-}
-
-.footer-quote span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-}
-
-/* responsive */
-@media (max-width: 480px) {
-    .container {
-        padding: 1.5rem;
-    }
-    .food-logo-circle {
-        width: 85px;
-        height: 85px;
-    }
-    .food-logo-circle i {
-        font-size: 2.5rem;
-    }
-    .rosora-text {
-        font-size: 2rem;
-    }
-    .feature-strip .badge {
-        font-size: 0.6rem;
-        padding: 4px 10px;
-    }
-}
-</style>
+        /* responsive */
+        @media (max-width: 500px) {
+            .card-inner {
+                padding: 1.6rem;
+            }
+            .brand h1 {
+                font-size: 2rem;
+            }
+            .feature-strip span {
+                font-size: 0.65rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<!-- floating food particles -->
-<div class="food-particle food-1">🍅</div>
-<div class="food-particle food-2">🍕</div>
-<div class="food-particle food-3">🥑</div>
-<div class="food-particle food-4">🍔</div>
-<div class="food-particle food-5">🍣</div>
-<div class="food-particle food-6">🥗</div>
-<div class="food-particle food-7">🍜</div>
-<div class="food-particle food-8">🍰</div>
-<div class="food-particle food-1" style="left: 10%; animation-duration: 17s; animation-delay: 7s;">🌮</div>
-<div class="food-particle food-2" style="left: 50%; animation-duration: 14s; animation-delay: 3s;">🍝</div>
-<div class="food-particle food-3" style="left: 80%; animation-duration: 16s; animation-delay: 8s;">🥘</div>
+<div class="signup-container">
+    <div class="card">
+        <div class="card-inner">
+            <div class="brand">
+                <!-- New brand icon: replaces robot with culinary / food lover vibe -->
+                <div class="brand-logo">
+                    <i class="fas fa-utensil-spoon"></i>
+                </div>
+                <!-- RO•SORA wordmark with dot (inspired from image "RO SORA" with dot) -->
+                <h1>
+                    <span class="ro">RO</span><span class="dot">•</span><span class="sora">SORA</span>
+                </h1>
+                <div class="tagline">
+                    <i class="fas fa-infinity"></i>
+                    <span>ONE APP. INFINITE POSSIBILITIES.</span>
+                    <i class="fas fa-meteor"></i>
+                </div>
+                <!-- feature chips exactly as the image describes: SHOPPING, SMART RECIPES, AI, COOKING OPTIMIZER etc -->
+                <div class="feature-strip">
+                    <span><i class="fas fa-shopping-basket"></i> SHOPPING</span>
+                    <span><i class="fas fa-brain"></i> SMART RECIPES</span>
+                    <span><i class="fas fa-robot"></i> AI</span>
+                    <span><i class="fas fa-step-forward"></i> STEP-BY-STEP</span>
+                    <span><i class="fas fa-fire"></i> COOKING OPTIMIZER</span>
+                    <span><i class="fas fa-tag"></i> PRICE</span>
+                    <span><i class="fas fa-heart"></i> FOODLOVERS</span>
+                    <span><i class="fas fa-users"></i> COMMUNITY</span>
+                </div>
+            </div>
 
-<div class="container">
-    <!-- FOOD LOGO - Animated plate with food -->
-    <div class="logo-food">
-        <div class="food-logo-circle">
-            <i class="fas fa-utensils"></i>
+            <form id="signupForm" novalidate>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="fullName" placeholder="Full name" autocomplete="name">
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Email address" autocomplete="email">
+                </div>
+
+                <div class="input-group password-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Password" autocomplete="new-password">
+                    <button type="button" class="toggle-pw" id="togglePassword" aria-label="Show password">
+                        <i class="far fa-eye-slash" id="eyeIcon"></i>
+                    </button>
+                </div>
+                <!-- password strength bar -->
+                <div class="strength-meter">
+                    <div class="strength-fill" id="strengthFill"></div>
+                </div>
+                <div class="strength-text" id="strengthText">⚡ at least 6 characters</div>
+
+                <div class="input-group password-wrapper">
+                    <i class="fas fa-check-circle"></i>
+                    <input type="password" id="confirmPassword" placeholder="Confirm password" autocomplete="off">
+                </div>
+                <div class="match-hint" id="matchHint">
+                    <i class="fas fa-info-circle"></i> <span>passwords must match</span>
+                </div>
+
+                <button type="submit" class="signup-btn" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Create account
+                </button>
+            </form>
+
+            <div class="login-redirect">
+                Already have an account? <a href="#" id="loginMock">Sign in →</a>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="brand-title">
-        <div class="rosora-text">ROSORA</div>
-        <div class="tagline">
-            <span>🍽️ ONE APP. INFINITE POSSIBILITIES 🍽️</span>
-        </div>
-    </div>
-
-    <!-- food-themed feature badges -->
-    <div class="feature-strip">
-        <div class="badge"><i class="fas fa-robot"></i> SMART RECIPES</div>
-        <div class="badge"><i class="fas fa-chart-line"></i> AI OPTIMIZER</div>
-        <div class="badge"><i class="fas fa-tag"></i> PRICE TRACK</div>
-        <div class="badge"><i class="fas fa-heart"></i> FOODLOVERS</div>
-        <div class="badge"><i class="fas fa-fire"></i> STEP-BY-STEP</div>
-    </div>
-
-    <!-- Signup Form -->
-    <div class="input-group">
-        <i class="fas fa-user-chef"></i>
-        <input type="text" id="fullname" placeholder="Full Name" autocomplete="name">
-    </div>
-
-    <div class="input-group">
-        <i class="fas fa-envelope"></i>
-        <input type="email" id="email" placeholder="Email address" autocomplete="email">
-    </div>
-
-    <div class="input-group password-wrapper">
-        <i class="fas fa-lock"></i>
-        <input type="password" id="password" placeholder="Password" autocomplete="new-password">
-        <button type="button" class="toggle-pw" id="togglePasswordBtn">
-            <i class="far fa-eye-slash" id="eyeIcon"></i>
-        </button>
-    </div>
-    <div class="strength-meter">
-        <div class="strength-fill" id="strengthFill"></div>
-    </div>
-    <div class="strength-text" id="strengthText">⚡ at least 6 characters</div>
-
-    <div class="input-group password-wrapper">
-        <i class="fas fa-check-circle"></i>
-        <input type="password" id="confirmPassword" placeholder="Confirm password">
-    </div>
-    <div class="match-hint" id="matchHint">
-        <i class="fas fa-info-circle"></i> <span>passwords must match</span>
-    </div>
-
-    <button class="btn" id="signupBtn">
-        <i class="fas fa-paper-plane"></i> Create Account
-    </button>
-
-    <div class="msg" id="msg"></div>
-
-    <div class="login-redirect">
-        Already have an account? <a href="#" id="loginLink">Sign in →</a>
-    </div>
-    <div class="footer-quote">
-        <span><i class="fas fa-microphone-alt"></i> AI Recipe Chef</span>
-        <span><i class="fas fa-shopping-cart"></i> Smart Shopping</span>
-        <span><i class="fas fa-chart-line"></i> Expense Tracker</span>
-    </div>
+<!-- floating toast -->
+<div id="toastMsg" class="toast-message">
+    <i class="fas fa-bell"></i> <span id="toastText">Message</span>
 </div>
 
 <script>
     (function() {
-        const fullname = document.getElementById('fullname');
+        // DOM elements
+        const fullName = document.getElementById('fullName');
         const email = document.getElementById('email');
         const password = document.getElementById('password');
         const confirmPw = document.getElementById('confirmPassword');
-        const signupBtn = document.getElementById('signupBtn');
-        const toggleBtn = document.getElementById('togglePasswordBtn');
+        const form = document.getElementById('signupForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const toggleBtn = document.getElementById('togglePassword');
         const eyeIcon = document.getElementById('eyeIcon');
         const strengthFill = document.getElementById('strengthFill');
         const strengthText = document.getElementById('strengthText');
-        const matchHint = document.getElementById('matchHint');
-        const msgDiv = document.getElementById('msg');
-        const loginLink = document.getElementById('loginLink');
+        const matchHintDiv = document.getElementById('matchHint');
+        const toast = document.getElementById('toastMsg');
+        const toastText = document.getElementById('toastText');
 
-        function showMessage(text, isError = true) {
-            msgDiv.style.color = isError ? '#FF6B6B' : '#4ECDC4';
-            msgDiv.innerHTML = isError ? `<i class="fas fa-exclamation-circle"></i> ${text}` : `<i class="fas fa-check-circle"></i> ${text}`;
+        // Helper: show toast
+        function showToast(message, isError = false) {
+            toastText.innerText = message;
+            toast.classList.add('show');
+            const icon = toast.querySelector('i');
+            if (icon) {
+                icon.className = isError ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle';
+            }
             setTimeout(() => {
-                if (msgDiv.innerHTML.includes(text)) msgDiv.innerHTML = '';
-            }, 4000);
+                toast.classList.remove('show');
+            }, 3000);
         }
 
+        // Password strength meter (based on length & complexity)
         function updateStrength() {
             const val = password.value;
+            let strength = 0;
             if (val.length === 0) {
                 strengthFill.style.width = '0%';
                 strengthText.innerHTML = '⚡ enter a password';
+                strengthText.style.color = '#64748b';
                 return;
             }
-            let score = 0;
-            if (val.length >= 6) score++;
-            if (val.length >= 8) score++;
-            if (/[A-Z]/.test(val)) score++;
-            if (/[0-9]/.test(val)) score++;
-            if (/[^A-Za-z0-9]/.test(val)) score++;
-            let percent = Math.min(100, score * 20);
+            if (val.length >= 6) strength += 1;
+            if (val.length >= 8) strength += 1;
+            if (/[A-Z]/.test(val)) strength += 1;
+            if (/[0-9]/.test(val)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(val)) strength += 1;
+            // max strength 5
+            let percent = Math.min(100, strength * 20);
             strengthFill.style.width = `${percent}%`;
             if (val.length < 6) {
                 strengthText.innerHTML = '❌ weak — min 6 characters';
-                strengthText.style.color = '#FF6B6B';
-            } else if (score >= 3) {
+                strengthText.style.color = '#ef4444';
+            } else if (strength >= 3 && val.length >= 6) {
                 strengthText.innerHTML = '✅ strong password';
-                strengthText.style.color = '#4ECDC4';
-            } else {
-                strengthText.innerHTML = '👍 good — add numbers/symbols';
-                strengthText.style.color = '#FFB347';
+                strengthText.style.color = '#10b981';
+            } else if (val.length >= 6) {
+                strengthText.innerHTML = '👍 decent — add numbers or symbols';
+                strengthText.style.color = '#f59e0b';
             }
         }
 
+        // check password match live
         function updateMatch() {
             const pw = password.value;
             const confirm = confirmPw.value;
             if (confirm === '') {
-                matchHint.innerHTML = '<i class="fas fa-info-circle"></i> <span>confirm your password</span>';
-                matchHint.classList.remove('valid', 'invalid');
+                matchHintDiv.innerHTML = '<i class="fas fa-info-circle"></i> <span>confirm your password</span>';
+                matchHintDiv.classList.remove('valid', 'invalid');
                 return;
             }
             if (pw === confirm) {
-                matchHint.innerHTML = '<i class="fas fa-check-circle"></i> <span>passwords match ✓</span>';
-                matchHint.classList.add('valid');
-                matchHint.classList.remove('invalid');
+                matchHintDiv.innerHTML = '<i class="fas fa-check-circle"></i> <span>passwords match ✓</span>';
+                matchHintDiv.classList.add('valid');
+                matchHintDiv.classList.remove('invalid');
             } else {
-                matchHint.innerHTML = '<i class="fas fa-times-circle"></i> <span>passwords do not match</span>';
-                matchHint.classList.add('invalid');
-                matchHint.classList.remove('valid');
+                matchHintDiv.innerHTML = '<i class="fas fa-times-circle"></i> <span>passwords do not match</span>';
+                matchHintDiv.classList.add('invalid');
+                matchHintDiv.classList.remove('valid');
             }
         }
 
+        // real-time listeners
+        password.addEventListener('input', () => {
+            updateStrength();
+            updateMatch();
+        });
+        confirmPw.addEventListener('input', updateMatch);
+
+        // toggle password visibility
         toggleBtn.addEventListener('click', () => {
             const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
             password.setAttribute('type', type);
             eyeIcon.className = type === 'password' ? 'far fa-eye-slash' : 'far fa-eye';
         });
 
-        password.addEventListener('input', () => { updateStrength(); updateMatch(); });
-        confirmPw.addEventListener('input', updateMatch);
-
+        // validation function
         function validateForm() {
-            const nameVal = fullname.value.trim();
+            const nameVal = fullName.value.trim();
             const emailVal = email.value.trim();
             const passVal = password.value;
             const confirmVal = confirmPw.value;
 
-            if (!nameVal) { showMessage('Please enter your full name', true); fullname.focus(); return false; }
-            if (!emailVal) { showMessage('Email address is required', true); email.focus(); return false; }
+            if (!nameVal) {
+                showToast('Please enter your full name', true);
+                fullName.focus();
+                return false;
+            }
+            if (!emailVal) {
+                showToast('Email address is required', true);
+                email.focus();
+                return false;
+            }
             const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
-            if (!emailRegex.test(emailVal)) { showMessage('Enter a valid email address', true); email.focus(); return false; }
-            if (!passVal) { showMessage('Create a password', true); password.focus(); return false; }
-            if (passVal.length < 6) { showMessage('Password must be at least 6 characters', true); password.focus(); return false; }
-            if (passVal !== confirmVal) { showMessage('Passwords do not match', true); confirmPw.focus(); return false; }
+            if (!emailRegex.test(emailVal)) {
+                showToast('Enter a valid email address', true);
+                email.focus();
+                return false;
+            }
+            if (!passVal) {
+                showToast('Create a password', true);
+                password.focus();
+                return false;
+            }
+            if (passVal.length < 6) {
+                showToast('Password must be at least 6 characters', true);
+                password.focus();
+                return false;
+            }
+            if (passVal !== confirmVal) {
+                showToast('Passwords do not match', true);
+                confirmPw.focus();
+                return false;
+            }
             return true;
         }
 
+        // submit handler with loading animation
         async function handleSignup(e) {
             e.preventDefault();
             if (!validateForm()) return;
 
-            const originalText = signupBtn.innerHTML;
-            signupBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Creating account...';
-            signupBtn.disabled = true;
+            // simulate loading state
+            const originalBtnHtml = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Creating account...';
+            submitBtn.disabled = true;
 
+            // Simulate network delay (for demo)
             await new Promise(resolve => setTimeout(resolve, 1200));
 
-            const user = { name: fullname.value.trim(), email: email.value.trim(), joined: new Date().toISOString() };
-            localStorage.setItem('rosora_user', JSON.stringify(user));
+            // store user info in localStorage (demo)
+            const userData = {
+                name: fullName.value.trim(),
+                email: email.value.trim(),
+                joined: new Date().toISOString(),
+                plan: 'RO•SORA AI Chef'
+            };
+            localStorage.setItem('rasora_user', JSON.stringify(userData));
 
-            showMessage(`🎉 Welcome ${fullname.value.trim().split(' ')[0]}! Your culinary journey with ROSORA begins! 🍽️`, false);
-            signupBtn.innerHTML = '<i class="fas fa-check-circle"></i> Success!';
-
+            // success toast with culinary flair
+            const firstName = fullName.value.trim().split(' ')[0];
+            showToast(`🍜 Welcome ${firstName}! Your RO•SORA AI kitchen is ready.`, false);
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Success!';
+            
+            // optional reset after 2 seconds 
             setTimeout(() => {
-                if (confirm('✨ Account created successfully!\n\nPress OK to reset form (test again) or Cancel to stay.')) {
-                    fullname.value = ''; email.value = ''; password.value = ''; confirmPw.value = '';
-                    updateStrength(); updateMatch();
-                    signupBtn.innerHTML = originalText;
-                    signupBtn.disabled = false;
-                    localStorage.removeItem('rosora_user');
-                    showMessage('Form reset — ready for next signup', false);
+                if (confirm('✨ Account created successfully! Want to explore the form again? (Demo reset)')) {
+                    fullName.value = '';
+                    email.value = '';
+                    password.value = '';
+                    confirmPw.value = '';
+                    updateStrength();
+                    updateMatch();
+                    submitBtn.innerHTML = originalBtnHtml;
+                    submitBtn.disabled = false;
+                    localStorage.removeItem('rasora_user');
+                    showToast('🧑‍🍳 Form reset — ready for next food lover', false);
                 } else {
-                    signupBtn.innerHTML = originalText;
-                    signupBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                    submitBtn.disabled = false;
+                    // just keep the account data for demo, but no action needed
+                    showToast('🔓 You can now access RO•SORA features soon', false);
                 }
             }, 1800);
         }
 
-        signupBtn.addEventListener('click', handleSignup);
-        loginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            showMessage('🔐 Login page coming soon! Stay tuned for delicious updates! 🍕', false);
-        });
+        form.addEventListener('submit', handleSignup);
 
+        // mock login link with RO•SORA message
+        const loginLink = document.getElementById('loginMock');
+        if (loginLink) {
+            loginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showToast('🍽️ RO•SORA login coming soon — your culinary community awaits!', false);
+            });
+        }
+
+        // initial strength and match clear
         updateStrength();
         updateMatch();
     })();
