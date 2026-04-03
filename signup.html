@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>RASORA • Sign up / Sign in</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #fef9f0 0%, #f2ebe5 100%);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(255,107,107,0.12) 0%, rgba(78,205,196,0.08) 80%);
+            border-radius: 50%;
+            top: -80px;
+            left: -80px;
+            z-index: 0;
+            filter: blur(70px);
+        }
+        body::after {
+            content: '';
+            position: absolute;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(255,179,71,0.1) 0%, rgba(255,107,107,0.05) 80%);
+            border-radius: 50%;
+            bottom: -120px;
+            right: -120px;
+            z-index: 0;
+            filter: blur(80px);
+        }
+        .auth-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(3px);
+            border-radius: 2rem;
+            box-shadow: 0 30px 50px -20px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,240,0.6);
+            overflow: hidden;
+        }
+        .card-inner {
+            padding: 2rem 2rem 2.2rem;
+        }
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: #f1f5f9;
+            padding: 0.4rem;
+            border-radius: 3rem;
+            margin-bottom: 2rem;
+        }
+        .tab-btn {
+            flex: 1;
+            text-align: center;
+            background: transparent;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.7rem 0;
+            border-radius: 2rem;
+            cursor: pointer;
+            color: #5b6e8c;
+            transition: all 0.2s;
+        }
+        .tab-btn i { margin-right: 0.4rem; }
+        .tab-btn.active {
+            background: white;
+            color: #ff7a7a;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid #ffe0e0;
+        }
+        .auth-form.hidden { display: none; }
+        .brand { text-align: center; margin-bottom: 1.5rem; }
+        .brand-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 0.8rem auto;
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4, #FFB347);
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 25px -10px rgba(255,107,107,0.4);
+        }
+        .brand-logo i { font-size: 2.8rem; color: white; }
+        .brand h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 45%, #FFB347 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .tagline {
+            color: #5b6e8c;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.2rem;
+            background: rgba(255,107,107,0.08);
+            padding: 0.3rem 0.9rem;
+            border-radius: 2rem;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .feature-strip {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 0.8rem 0 1rem;
+        }
+        .feature-strip span {
+            background: #f8f9fc;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #2c3e66;
+            border: 1px solid #ffefef;
+        }
+        .input-group {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            font-size: 0.95rem;
+            border: 1.5px solid #e9edf2;
+            border-radius: 1.2rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .input-group input:focus {
+            border-color: #ff7a7a;
+            box-shadow: 0 0 0 3px rgba(255,122,122,0.15);
+        }
+        .toggle-pw {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+        .strength-meter {
+            margin-top: 0.4rem;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .strength-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff7a7a, #6be5c2);
+            transition: width 0.2s;
+        }
+        .strength-text, .match-hint {
+            font-size: 0.7rem;
+            margin-top: 0.3rem;
+            text-align: right;
+            color: #64748b;
+        }
+        .match-hint { text-align: left; }
+        .match-hint.valid { color: #10b981; }
+        .match-hint.invalid { color: #ef4444; }
+        .auth-btn {
+            width: 100%;
+            background: linear-gradient(105deg, #ff7a7a, #6be5c2);
+            border: none;
+            padding: 0.9rem;
+            border-radius: 1.8rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+            box-shadow: 0 6px 14px rgba(255,122,122,0.2);
+        }
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.02);
+        }
+        .forgot-link { text-align: right; margin-top: 0.4rem; font-size: 0.7rem; }
+        .forgot-link a { color: #ff7a7a; text-decoration: none; }
+        .toast-message {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            background: #1e293b;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 3rem;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.2s;
+            background: rgba(30,41,59,0.95);
+        }
+        .toast-message.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scale(1);
+        }
+    </style>
+</head>
+<body>
+<div class="auth-container">
+    <div class="card">
+        <div class="card-inner">
+            <div class="brand">
+                <div class="brand-logo"><i class="fas fa-utensil-spoon"></i></div>
+                <h1>RASORA</h1>
+                <div class="tagline"><i class="fas fa-infinity"></i> ONE APP. INFINITE POSSIBILITIES.</div>
+                <div class="feature-strip">
+                    <span><i class="fas fa-shopping-basket"></i> SHOPPING</span>
+                    <span><i class="fas fa-brain"></i> SMART RECIPES</span>
+                    <span><i class="fas fa-robot"></i> AI</span>
+                    <span><i class="fas fa-heart"></i> FOODLOVERS</span>
+                </div>
+            </div>
+            <div class="tabs">
+                <button class="tab-btn active" id="tabSignupBtn"><i class="fas fa-user-plus"></i> Sign up</button>
+                <button class="tab-btn" id="tabSigninBtn"><i class="fas fa-sign-in-alt"></i> Sign in</button>
+            </div>
+            <div class="forms-container">
+                <div id="signupFormContainer" class="auth-form">
+                    <form id="signupForm">
+                        <div class="input-group"><i class="fas fa-user"></i><input type="text" id="fullName" placeholder="Full name"></div>
+                        <div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="signupEmail" placeholder="Email"></div>
+                        <div class="input-group password-wrapper">
+                            <i class="fas fa-lock"></i><input type="password" id="signupPassword" placeholder="Password">
+                            <button type="button" class="toggle-pw toggleSignupPw"><i class="far fa-eye-slash"></i></button>
+                        </div>
+                        <div class="strength-meter"><div class="strength-fill" id="strengthFill"></div></div>
+                        <div class="strength-text" id="strengthText">⚡ at least 6 characters</div>
+                        <div class="input-group password-wrapper">
+                            <i class="fas fa-check-circle"></i><input type="password" id="confirmPassword" placeholder="Confirm password">
+                        </div>
+                        <div class="match-hint" id="matchHint"><i class="fas fa-info-circle"></i> <span>passwords must match</span></div>
+                        <button type="submit" class="auth-btn"><i class="fas fa-paper-plane"></i> Create account</button>
+                    </form>
+                </div>
+                <div id="signinFormContainer" class="auth-form hidden">
+                    <form id="signinForm">
+                        <div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="signinEmail" placeholder="Email"></div>
+                        <div class="input-group password-wrapper">
+                            <i class="fas fa-lock"></i><input type="password" id="signinPassword" placeholder="Password">
+                            <button type="button" class="toggle-pw toggleSigninPw"><i class="far fa-eye-slash"></i></button>
+                        </div>
+                        <div class="forgot-link"><a href="#" id="forgotMock">Forgot password?</a></div>
+                        <button type="submit" class="auth-btn"><i class="fas fa-arrow-right-to-bracket"></i> Sign in</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="toastMsg" class="toast-message"><i class="fas fa-bell"></i> <span id="toastText"></span></div>
+
+<script>
+    (function() {
+        const tabSignup = document.getElementById('tabSignupBtn');
+        const tabSignin = document.getElementById('tabSigninBtn');
+        const signupContainer = document.getElementById('signupFormContainer');
+        const signinContainer = document.getElementById('signinFormContainer');
+        const fullName = document.getElementById('fullName');
+        const signupEmail = document.getElementById('signupEmail');
+        const signupPassword = document.getElementById('signupPassword');
+        const confirmPw = document.getElementById('confirmPassword');
+        const signinEmail = document.getElementById('signinEmail');
+        const signinPassword = document.getElementById('signinPassword');
+        const strengthFill = document.getElementById('strengthFill');
+        const strengthText = document.getElementById('strengthText');
+        const matchHint = document.getElementById('matchHint');
+        const toast = document.getElementById('toastMsg');
+        const toastText = document.getElementById('toastText');
+        
+        function showToast(msg, isError = false) {
+            toastText.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        function updateStrength() {
+            const val = signupPassword.value;
+            if (!val.length) { strengthFill.style.width = '0%'; strengthText.innerHTML = '⚡ enter a password'; return; }
+            let strength = 0;
+            if (val.length >= 6) strength++;
+            if (val.length >= 8) strength++;
+            if (/[A-Z]/.test(val)) strength++;
+            if (/[0-9]/.test(val)) strength++;
+            if (/[^A-Za-z0-9]/.test(val)) strength++;
+            let percent = Math.min(100, strength * 20);
+            strengthFill.style.width = `${percent}%`;
+            if (val.length < 6) strengthText.innerHTML = '❌ weak — min 6 chars';
+            else if (strength >= 3) strengthText.innerHTML = '✅ strong password';
+            else strengthText.innerHTML = '👍 decent — add numbers/symbols';
+        }
+        
+        function updateMatch() {
+            const pw = signupPassword.value;
+            const conf = confirmPw.value;
+            if (!conf) { matchHint.innerHTML = '<i class="fas fa-info-circle"></i> <span>confirm your password</span>'; matchHint.classList.remove('valid','invalid'); return; }
+            if (pw === conf) { matchHint.innerHTML = '<i class="fas fa-check-circle"></i> <span>passwords match ✓</span>'; matchHint.classList.add('valid'); matchHint.classList.remove('invalid'); }
+            else { matchHint.innerHTML = '<i class="fas fa-times-circle"></i> <span>passwords do not match</span>'; matchHint.classList.add('invalid'); matchHint.classList.remove('valid'); }
+        }
+        
+        signupPassword.addEventListener('input', () => { updateStrength(); updateMatch(); });
+        confirmPw.addEventListener('input', updateMatch);
+        
+        document.querySelector('.toggleSignupPw').addEventListener('click', () => {
+            const type = signupPassword.type === 'password' ? 'text' : 'password';
+            signupPassword.type = type;
+            document.querySelector('.toggleSignupPw i').className = type === 'password' ? 'far fa-eye-slash' : 'far fa-eye';
+        });
+        document.querySelector('.toggleSigninPw').addEventListener('click', () => {
+            const type = signinPassword.type === 'password' ? 'text' : 'password';
+            signinPassword.type = type;
+            document.querySelector('.toggleSigninPw i').className = type === 'password' ? 'far fa-eye-slash' : 'far fa-eye';
+        });
+        
+        function validateSignup() {
+            if (!fullName.value.trim()) { showToast('Enter full name', true); return false; }
+            if (!signupEmail.value.trim()) { showToast('Enter email', true); return false; }
+            if (!/^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(signupEmail.value.trim())) { showToast('Invalid email', true); return false; }
+            if (signupPassword.value.length < 6) { showToast('Password min 6 chars', true); return false; }
+            if (signupPassword.value !== confirmPw.value) { showToast('Passwords do not match', true); return false; }
+            return true;
+        }
+        
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!validateSignup()) return;
+            const btn = e.target.querySelector('button[type="submit"]');
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Creating...';
+            btn.disabled = true;
+            try {
+                const response = await fetch('http://localhost:8000/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: fullName.value.trim(),
+                        email: signupEmail.value.trim(),
+                        password: signupPassword.value,
+                        diet_pref: 'vegetarian'
+                    })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('rasora_user', JSON.stringify({ id: data.user_id, name: fullName.value.trim(), email: signupEmail.value.trim() }));
+                    localStorage.setItem('rasora_logged_in', 'true');
+                    showToast(`✅ Welcome ${fullName.value.trim().split(' ')[0]}! Redirecting...`, false);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    showToast(data.detail || 'Signup failed', true);
+                }
+            } catch (error) {
+                showToast('Network error. Try again.', true);
+            }
+            btn.innerHTML = orig;
+            btn.disabled = false;
+        });
+        
+        document.getElementById('signinForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = signinEmail.value.trim();
+            const pwd = signinPassword.value;
+            if (!email || !pwd) { showToast('Enter email and password', true); return; }
+            const btn = e.target.querySelector('button[type="submit"]');
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Signing in...';
+            btn.disabled = true;
+            try {
+                const response = await fetch('http://localhost:8000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ email, password: pwd })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('rasora_user', JSON.stringify({ id: data.user_id, name: data.name, email }));
+                    localStorage.setItem('rasora_logged_in', 'true');
+                    showToast('🎉 Sign in successful! Redirecting...', false);
+                    setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+                } else {
+                    const message = Array.isArray(data.detail) ? data.detail.map(d=>d.msg||d).join(', ') : (typeof data.detail==='object' ? JSON.stringify(data.detail) : data.detail);
+                    showToast(message || 'Login failed', true);
+                }
+            } catch (error) {
+                showToast('Network error. Try again.', true);
+            }
+            btn.innerHTML = orig;
+            btn.disabled = false;
+        });
+        
+        document.getElementById('forgotMock').addEventListener('click', (e) => {
+            e.preventDefault();
+            showToast('📧 Password reset link sent (demo)', false);
+        });
+        
+        function setActiveTab(tab) {
+            if (tab === 'signup') {
+                tabSignup.classList.add('active'); tabSignin.classList.remove('active');
+                signupContainer.classList.remove('hidden'); signinContainer.classList.add('hidden');
+            } else {
+                tabSignin.classList.add('active'); tabSignup.classList.remove('active');
+                signinContainer.classList.remove('hidden'); signupContainer.classList.add('hidden');
+            }
+        }
+        tabSignup.addEventListener('click', () => setActiveTab('signup'));
+        tabSignin.addEventListener('click', () => setActiveTab('signin'));
+        updateStrength(); updateMatch();
+    })();
+</script>
+</body>
+</html>
