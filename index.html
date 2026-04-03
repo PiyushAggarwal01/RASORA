@@ -2,7 +2,693 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RASORA - Smart Kitchen Dashboard</title>
-    <link rel="stylesheet" href="index.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>RO•SORA • Sign up for culinary AI</title>
+    <!-- Google Fonts + Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f8fafc 0%, #eef2f5 100%);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* animated background blobs (matching gradient colors) */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,122,122,0.15) 0%, rgba(107,229,194,0.1) 80%);
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+            z-index: 0;
+            filter: blur(60px);
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(107,229,194,0.12) 0%, rgba(255,122,122,0.08) 80%);
+            border-radius: 50%;
+            bottom: -120px;
+            right: -120px;
+            z-index: 0;
+            filter: blur(70px);
+        }
+
+        /* main card */
+        .signup-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .card-inner {
+            padding: 2rem 2rem 2.2rem;
+        }
+
+        /* header with brand — NEW LOGO & STYLE */
+        .brand {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+
+        /* custom logo container: replaces robot with food/culinary icon */
+        .brand-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem auto;
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 25px -10px rgba(255,107,107,0.4);
+            transition: transform 0.2s ease;
+        }
+        
+        .brand-logo i {
+            font-size: 2.5rem;
+            color: white;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.1));
+        }
+
+        /* main wordmark: RO•SORA with dot */
+        .brand h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(120deg, #FF6B6B, #4ECDC4, #FFB347);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.1rem;
+        }
+        
+        .brand h1 .ro {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        
+        .brand h1 .dot {
+            background: linear-gradient(135deg, #4ECDC4, #FFB347);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            font-size: 2rem;
+        }
+        
+        .brand h1 .sora {
+            background: linear-gradient(135deg, #4ECDC4, #6be5c2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* tagline inspired by the image text */
+        .tagline {
+            color: #5b6e8c;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            background: rgba(255,107,107,0.08);
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            backdrop-filter: blur(2px);
+        }
+        
+        .tagline span {
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .tagline i {
+            color: #FF6B6B;
+            font-size: 0.65rem;
+        }
+        
+        .feature-strip {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem 1rem;
+            margin-top: 0.8rem;
+            margin-bottom: 1rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #2c3e66;
+        }
+        
+        .feature-strip span {
+            background: #f1f5f9;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            letter-spacing: -0.2px;
+        }
+        
+        .feature-strip i {
+            margin-right: 4px;
+            font-size: 0.65rem;
+            color: #FF6B6B;
+        }
+
+        /* form fields */
+        .input-group {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1rem;
+            transition: color 0.2s;
+            pointer-events: none;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 1.2rem;
+            color: #1e293b;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #ff7a7a;
+            box-shadow: 0 0 0 3px rgba(255, 122, 122, 0.2);
+        }
+
+        .input-group input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        /* password wrapper with toggle */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .toggle-pw {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 1rem;
+            z-index: 2;
+        }
+
+        .toggle-pw:hover {
+            color: #ff7a7a;
+        }
+
+        /* password strength meter */
+        .strength-meter {
+            margin-top: 0.4rem;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .strength-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff7a7a, #6be5c2);
+            border-radius: 4px;
+            transition: width 0.25s ease;
+        }
+
+        .strength-text {
+            font-size: 0.7rem;
+            margin-top: 0.3rem;
+            text-align: right;
+            color: #64748b;
+        }
+
+        /* confirm password match hint */
+        .match-hint {
+            font-size: 0.7rem;
+            margin-top: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: #64748b;
+        }
+
+        .match-hint i {
+            font-size: 0.7rem;
+        }
+
+        .match-hint.valid {
+            color: #10b981;
+        }
+
+        .match-hint.invalid {
+            color: #ef4444;
+        }
+
+        /* signup button */
+        .signup-btn {
+            width: 100%;
+            background: linear-gradient(105deg, #ff7a7a, #6be5c2);
+            border: none;
+            padding: 0.9rem;
+            border-radius: 1.8rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 14px rgba(255, 122, 122, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+        }
+
+        .signup-btn i {
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .signup-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.02);
+            box-shadow: 0 12px 20px -8px rgba(107, 229, 194, 0.4);
+        }
+
+        .signup-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* login redirect */
+        .login-redirect {
+            text-align: center;
+            margin-top: 1.6rem;
+            color: #5b6e8c;
+            font-size: 0.9rem;
+        }
+
+        .login-redirect a {
+            color: #ff7a7a;
+            font-weight: 600;
+            text-decoration: none;
+            margin-left: 0.2rem;
+        }
+
+        .login-redirect a:hover {
+            text-decoration: underline;
+            color: #6be5c2;
+        }
+
+        /* toast message */
+        .toast-message {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            background: #1e293b;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 3rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(8px);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .toast-message.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scale(1);
+        }
+
+        .toast-message i {
+            font-size: 1rem;
+        }
+
+        /* responsive */
+        @media (max-width: 500px) {
+            .card-inner {
+                padding: 1.6rem;
+            }
+            .brand h1 {
+                font-size: 2rem;
+            }
+            .feature-strip span {
+                font-size: 0.65rem;
+            }
+        }
+    </style>
 </head>
+<body>
+
+<div class="signup-container">
+    <div class="card">
+        <div class="card-inner">
+            <div class="brand">
+                <!-- New brand icon: replaces robot with culinary / food lover vibe -->
+                <div class="brand-logo">
+                    <i class="fas fa-utensil-spoon"></i>
+                </div>
+                <!-- RO•SORA wordmark with dot (inspired from image "RO SORA" with dot) -->
+                <h1>
+                    <span class="ro">RO</span><span class="dot">•</span><span class="sora">SORA</span>
+                </h1>
+                <div class="tagline">
+                    <i class="fas fa-infinity"></i>
+                    <span>ONE APP. INFINITE POSSIBILITIES.</span>
+                    <i class="fas fa-meteor"></i>
+                </div>
+                <!-- feature chips exactly as the image describes: SHOPPING, SMART RECIPES, AI, COOKING OPTIMIZER etc -->
+                <div class="feature-strip">
+                    <span><i class="fas fa-shopping-basket"></i> SHOPPING</span>
+                    <span><i class="fas fa-brain"></i> SMART RECIPES</span>
+                    <span><i class="fas fa-robot"></i> AI</span>
+                    <span><i class="fas fa-step-forward"></i> STEP-BY-STEP</span>
+                    <span><i class="fas fa-fire"></i> COOKING OPTIMIZER</span>
+                    <span><i class="fas fa-tag"></i> PRICE</span>
+                    <span><i class="fas fa-heart"></i> FOODLOVERS</span>
+                    <span><i class="fas fa-users"></i> COMMUNITY</span>
+                </div>
+            </div>
+
+            <form id="signupForm" novalidate>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="fullName" placeholder="Full name" autocomplete="name">
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Email address" autocomplete="email">
+                </div>
+
+                <div class="input-group password-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Password" autocomplete="new-password">
+                    <button type="button" class="toggle-pw" id="togglePassword" aria-label="Show password">
+                        <i class="far fa-eye-slash" id="eyeIcon"></i>
+                    </button>
+                </div>
+                <!-- password strength bar -->
+                <div class="strength-meter">
+                    <div class="strength-fill" id="strengthFill"></div>
+                </div>
+                <div class="strength-text" id="strengthText">⚡ at least 6 characters</div>
+
+                <div class="input-group password-wrapper">
+                    <i class="fas fa-check-circle"></i>
+                    <input type="password" id="confirmPassword" placeholder="Confirm password" autocomplete="off">
+                </div>
+                <div class="match-hint" id="matchHint">
+                    <i class="fas fa-info-circle"></i> <span>passwords must match</span>
+                </div>
+
+                <button type="submit" class="signup-btn" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Create account
+                </button>
+            </form>
+
+            <div class="login-redirect">
+                Already have an account? <a href="#" id="loginMock">Sign in →</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- floating toast -->
+<div id="toastMsg" class="toast-message">
+    <i class="fas fa-bell"></i> <span id="toastText">Message</span>
+</div>
+
+<script>
+    (function() {
+        // DOM elements
+        const fullName = document.getElementById('fullName');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const confirmPw = document.getElementById('confirmPassword');
+        const form = document.getElementById('signupForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const toggleBtn = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const strengthFill = document.getElementById('strengthFill');
+        const strengthText = document.getElementById('strengthText');
+        const matchHintDiv = document.getElementById('matchHint');
+        const toast = document.getElementById('toastMsg');
+        const toastText = document.getElementById('toastText');
+
+        // Helper: show toast
+        function showToast(message, isError = false) {
+            toastText.innerText = message;
+            toast.classList.add('show');
+            const icon = toast.querySelector('i');
+            if (icon) {
+                icon.className = isError ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle';
+            }
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Password strength meter (based on length & complexity)
+        function updateStrength() {
+            const val = password.value;
+            let strength = 0;
+            if (val.length === 0) {
+                strengthFill.style.width = '0%';
+                strengthText.innerHTML = '⚡ enter a password';
+                strengthText.style.color = '#64748b';
+                return;
+            }
+            if (val.length >= 6) strength += 1;
+            if (val.length >= 8) strength += 1;
+            if (/[A-Z]/.test(val)) strength += 1;
+            if (/[0-9]/.test(val)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(val)) strength += 1;
+            // max strength 5
+            let percent = Math.min(100, strength * 20);
+            strengthFill.style.width = `${percent}%`;
+            if (val.length < 6) {
+                strengthText.innerHTML = '❌ weak — min 6 characters';
+                strengthText.style.color = '#ef4444';
+            } else if (strength >= 3 && val.length >= 6) {
+                strengthText.innerHTML = '✅ strong password';
+                strengthText.style.color = '#10b981';
+            } else if (val.length >= 6) {
+                strengthText.innerHTML = '👍 decent — add numbers or symbols';
+                strengthText.style.color = '#f59e0b';
+            }
+        }
+
+        // check password match live
+        function updateMatch() {
+            const pw = password.value;
+            const confirm = confirmPw.value;
+            if (confirm === '') {
+                matchHintDiv.innerHTML = '<i class="fas fa-info-circle"></i> <span>confirm your password</span>';
+                matchHintDiv.classList.remove('valid', 'invalid');
+                return;
+            }
+            if (pw === confirm) {
+                matchHintDiv.innerHTML = '<i class="fas fa-check-circle"></i> <span>passwords match ✓</span>';
+                matchHintDiv.classList.add('valid');
+                matchHintDiv.classList.remove('invalid');
+            } else {
+                matchHintDiv.innerHTML = '<i class="fas fa-times-circle"></i> <span>passwords do not match</span>';
+                matchHintDiv.classList.add('invalid');
+                matchHintDiv.classList.remove('valid');
+            }
+        }
+
+        // real-time listeners
+        password.addEventListener('input', () => {
+            updateStrength();
+            updateMatch();
+        });
+        confirmPw.addEventListener('input', updateMatch);
+
+        // toggle password visibility
+        toggleBtn.addEventListener('click', () => {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            eyeIcon.className = type === 'password' ? 'far fa-eye-slash' : 'far fa-eye';
+        });
+
+        // validation function
+        function validateForm() {
+            const nameVal = fullName.value.trim();
+            const emailVal = email.value.trim();
+            const passVal = password.value;
+            const confirmVal = confirmPw.value;
+
+            if (!nameVal) {
+                showToast('Please enter your full name', true);
+                fullName.focus();
+                return false;
+            }
+            if (!emailVal) {
+                showToast('Email address is required', true);
+                email.focus();
+                return false;
+            }
+            const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+            if (!emailRegex.test(emailVal)) {
+                showToast('Enter a valid email address', true);
+                email.focus();
+                return false;
+            }
+            if (!passVal) {
+                showToast('Create a password', true);
+                password.focus();
+                return false;
+            }
+            if (passVal.length < 6) {
+                showToast('Password must be at least 6 characters', true);
+                password.focus();
+                return false;
+            }
+            if (passVal !== confirmVal) {
+                showToast('Passwords do not match', true);
+                confirmPw.focus();
+                return false;
+            }
+            return true;
+        }
+
+        // submit handler with loading animation
+        async function handleSignup(e) {
+            e.preventDefault();
+            if (!validateForm()) return;
+
+            // simulate loading state
+            const originalBtnHtml = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Creating account...';
+            submitBtn.disabled = true;
+
+            // Simulate network delay (for demo)
+            await new Promise(resolve => setTimeout(resolve, 1200));
+
+            // store user info in localStorage (demo)
+            const userData = {
+                name: fullName.value.trim(),
+                email: email.value.trim(),
+                joined: new Date().toISOString(),
+                plan: 'RO•SORA AI Chef'
+            };
+            localStorage.setItem('rasora_user', JSON.stringify(userData));
+
+            // success toast with culinary flair
+            const firstName = fullName.value.trim().split(' ')[0];
+            showToast(`🍜 Welcome ${firstName}! Your RO•SORA AI kitchen is ready.`, false);
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Success!';
+            
+            // optional reset after 2 seconds 
+            setTimeout(() => {
+                if (confirm('✨ Account created successfully! Want to explore the form again? (Demo reset)')) {
+                    fullName.value = '';
+                    email.value = '';
+                    password.value = '';
+                    confirmPw.value = '';
+                    updateStrength();
+                    updateMatch();
+                    submitBtn.innerHTML = originalBtnHtml;
+                    submitBtn.disabled = false;
+                    localStorage.removeItem('rasora_user');
+                    showToast('🧑‍🍳 Form reset — ready for next food lover', false);
+                } else {
+                    submitBtn.innerHTML = originalBtnHtml;
+                    submitBtn.disabled = false;
+                    // just keep the account data for demo, but no action needed
+                    showToast('🔓 You can now access RO•SORA features soon', false);
+                }
+            }, 1800);
+        }
+
+        form.addEventListener('submit', handleSignup);
+
+        // mock login link with RO•SORA message
+        const loginLink = document.getElementById('loginMock');
+        if (loginLink) {
+            loginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showToast('🍽️ RO•SORA login coming soon — your culinary community awaits!', false);
+            });
+        }
+
+        // initial strength and match clear
+        updateStrength();
+        updateMatch();
+    })();
+</script>
+</body>
+</html>
