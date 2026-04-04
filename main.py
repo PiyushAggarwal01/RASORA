@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 import sqlite3, httpx, json
+from datetime import datetime, timedelta
 
 DB_NAME = "rasora.db"
 
@@ -71,6 +72,20 @@ def create_tables():
         comments INTEGER DEFAULT 0,
         created_at DATE DEFAULT CURRENT_DATE
     )''')
+    # NEW: communities table
+    c.execute('''CREATE TABLE IF NOT EXISTS communities (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        created_by INTEGER,
+        created_at DATE DEFAULT CURRENT_DATE
+    )''')
+    # Add community_id column to community_posts if not exists
+    try:
+        c.execute("ALTER TABLE community_posts ADD COLUMN community_id INTEGER DEFAULT 1")
+    except sqlite3.OperationalError:
+        pass
+    # Insert default community "General" if not exists
+    c.execute("INSERT OR IGNORE INTO communities (id, name, created_by) VALUES (1, 'General', 1)")
     conn.commit()
     conn.close()
 
@@ -172,7 +187,9 @@ class Expense(BaseModel):
 class Order(BaseModel):
     product_id: int; quantity: int
 class Post(BaseModel):
-    recipe_name: str; description: str
+    recipe_name: str
+    description: str
+    community_id: Optional[int] = 1   # NEW field
 class User(BaseModel):
     name: str; email: str; password: str; diet_pref: Optional[str] = "vegetarian"
 
@@ -262,14 +279,12 @@ def delete_expense(expense_id: int, user_id: int=1):
     return {"message": "Deleted"}
 
 @app.post("/api/orders")
-@app.post("/api/orders")
 def add_order(order: Order, user_id: int = 1):
     conn = get_db(); c = conn.cursor()
     c.execute("SELECT price FROM products WHERE id=?", (order.product_id,))
     p = c.fetchone()
     if not p: raise HTTPException(404)
     price = p[0]
-    # Use user_id from query parameter (default 1)
     c.execute("INSERT INTO orders (user_id, product_id, quantity, price) VALUES (?,?,?,?)", 
               (user_id, order.product_id, order.quantity, price))
     conn.commit(); conn.close()
@@ -291,17 +306,57 @@ def get_orders(user_id: int=1):
     orders = c.fetchall(); conn.close()
     return {"orders": [dict(o) for o in orders]}
 
-@app.get("/api/posts")
-def get_posts():
+# ============ COMMUNITY APIS ============
+@app.get("/api/communities")
+def get_communities():
     conn = get_db(); c = conn.cursor()
-    c.execute("SELECT * FROM community_posts ORDER BY likes DESC")
+    c.execute("SELECT * FROM communities ORDER BY created_at DESC")
+    comms = c.fetchall(); conn.close()
+    return {"communities": [dict(c) for c in comms]}
+
+@app.post("/api/communities")
+def create_community(name: str, user_id: int = 1):
+    if not name.strip():
+        raise HTTPException(400, "Community name required")
+    conn = get_db(); c = conn.cursor()
+    try:
+        c.execute("INSERT INTO communities (name, created_by) VALUES (?, ?)", (name.strip(), user_id))
+        conn.commit()
+        new_id = c.lastrowid
+    except sqlite3.IntegrityError:
+        conn.close()
+        raise HTTPException(400, "Community name already exists")
+    conn.close()
+    return {"message": "Community created", "id": new_id}
+
+@app.delete("/api/communities/{community_id}")
+def delete_community(community_id: int, user_id: int = 1):
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT * FROM communities WHERE id = ?", (community_id,))
+    if not c.fetchone():
+        conn.close()
+        raise HTTPException(404, "Community not found")
+    c.execute("DELETE FROM community_posts WHERE community_id = ?", (community_id,))
+    c.execute("DELETE FROM communities WHERE id = ?", (community_id,))
+    conn.commit(); conn.close()
+    return {"message": "Community deleted"}
+
+# Modified posts endpoints to support community_id
+@app.get("/api/posts")
+def get_posts(community_id: Optional[int] = None):
+    conn = get_db(); c = conn.cursor()
+    if community_id:
+        c.execute("SELECT * FROM community_posts WHERE community_id = ? ORDER BY likes DESC", (community_id,))
+    else:
+        c.execute("SELECT * FROM community_posts ORDER BY likes DESC")
     posts = c.fetchall(); conn.close()
     return {"posts": [dict(p) for p in posts]}
 
 @app.post("/api/posts")
-def add_post(post: Post, user_id: int=1):
+def add_post(post: Post, user_id: int = 1):
     conn = get_db(); c = conn.cursor()
-    c.execute("INSERT INTO community_posts (user_id, recipe_name, description) VALUES (?,?,?)", (user_id, post.recipe_name, post.description))
+    c.execute("INSERT INTO community_posts (user_id, recipe_name, description, community_id) VALUES (?,?,?,?)",
+              (user_id, post.recipe_name, post.description, post.community_id))
     conn.commit(); conn.close()
     return {"message": "Posted"}
 
@@ -335,3 +390,116 @@ async def chat(request: dict):
         except:
             reply = "Sorry, I couldn't generate a response."
         return {"reply": reply}
+
+# ============ AI DIET PLANNER APIS ============
+# Recipe Database for Diet Planner
+DIET_RECIPES = {
+    "vegetarian": {
+        "lose weight": {
+            "breakfast": {"name": "Oats Upma", "cost": 30, "time": 15, "calories": 250, "ingredients": ["oats", "vegetables", "spices"]},
+            "lunch": {"name": "Quinoa Salad", "cost": 50, "time": 20, "calories": 350, "ingredients": ["quinoa", "cucumber", "tomato", "lemon"]},
+            "dinner": {"name": "Soup & Brown Rice", "cost": 40, "time": 25, "calories": 300, "ingredients": ["brown rice", "mixed soup veggies"]}
+        },
+        "gain muscle": {
+            "breakfast": {"name": "Protein Smoothie", "cost": 80, "time": 10, "calories": 400, "ingredients": ["protein powder", "banana", "peanut butter"]},
+            "lunch": {"name": "Chole + Rice", "cost": 70, "time": 35, "calories": 550, "ingredients": ["chickpeas", "rice", "onion", "tomato"]},
+            "dinner": {"name": "Mushroom Curry", "cost": 80, "time": 30, "calories": 500, "ingredients": ["mushroom", "cream", "spices"]}
+        }
+    },
+    "non-vegetarian": {
+        "lose weight": {
+            "breakfast": {"name": "Egg White Omelette", "cost": 40, "time": 10, "calories": 200, "ingredients": ["egg whites", "spinach", "salt"]},
+            "lunch": {"name": "Grilled Chicken Salad", "cost": 90, "time": 25, "calories": 350, "ingredients": ["chicken breast", "lettuce", "olive oil"]},
+            "dinner": {"name": "Fish Stew", "cost": 110, "time": 30, "calories": 300, "ingredients": ["fish fillet", "tomato", "garlic"]}
+        },
+        "gain muscle": {
+            "breakfast": {"name": "Chicken Omelette", "cost": 80, "time": 20, "calories": 500, "ingredients": ["chicken mince", "eggs", "cheese"]},
+            "lunch": {"name": "Egg Curry + Rice", "cost": 70, "time": 30, "calories": 550, "ingredients": ["eggs", "rice", "curry leaves"]},
+            "dinner": {"name": "Chicken Breast + Veggies", "cost": 120, "time": 25, "calories": 600, "ingredients": ["chicken", "broccoli", "butter"]}
+        }
+    }
+}
+
+@app.post("/api/diet/plan")
+async def generate_diet_plan(request: dict):
+    diet_type = request.get("diet_type", "vegetarian")
+    goal = request.get("goal", "lose weight")
+    weekly_budget = request.get("weekly_budget", 1000)
+    duration_days = request.get("duration_days", 7)
+    calorie_target = request.get("calorie_target", 0)
+    
+    # Get base meal plan
+    if diet_type in DIET_RECIPES and goal in DIET_RECIPES[diet_type]:
+        meals = DIET_RECIPES[diet_type][goal]
+    else:
+        meals = DIET_RECIPES["vegetarian"]["lose weight"]
+    
+    # Calculate costs
+    daily_cost = meals["breakfast"]["cost"] + meals["lunch"]["cost"] + meals["dinner"]["cost"]
+    total_cost = daily_cost * duration_days
+    weekly_budget_needed = (total_cost / duration_days) * 7
+    
+    # Generate daily plan (first 7 days only)
+    daily_plans = []
+    for day in range(min(duration_days, 7)):
+        daily_plans.append({
+            "day": day + 1,
+            "date": (datetime.now() + timedelta(days=day)).strftime("%A, %d %B"),
+            "breakfast": meals["breakfast"],
+            "lunch": meals["lunch"],
+            "dinner": meals["dinner"]
+        })
+    
+    # Shopping list
+    all_ingredients = []
+    for meal in meals.values():
+        all_ingredients.extend(meal["ingredients"])
+    shopping_list = sorted(list(set(all_ingredients)))
+    
+    # Tips
+    tips = []
+    if goal == "lose weight":
+        tips.append("🥗 Eat protein-rich breakfast to avoid cravings")
+        tips.append("💧 Drink 2-3 liters of water daily")
+        tips.append("🚶 Walk 10,000 steps daily for better results")
+    else:
+        tips.append("💪 Eat within 1 hour after workout")
+        tips.append("🥚 Add 1 extra protein source to each meal")
+        tips.append("😴 Sleep 7-8 hours for muscle recovery")
+    
+    if weekly_budget_needed > weekly_budget:
+        tips.append(f"💰 Your plan costs ₹{weekly_budget_needed:.0f}/week. Try buying seasonal vegetables to save 20%")
+    else:
+        tips.append(f"✅ You're within budget! Save ₹{weekly_budget - weekly_budget_needed:.0f} for healthy snacks")
+    
+    return {
+        "success": True,
+        "plan": {
+            "daily_meals": daily_plans,
+            "summary": {
+                "daily_cost": daily_cost,
+                "total_cost": total_cost,
+                "weekly_budget_needed": round(weekly_budget_needed, 2),
+                "within_budget": weekly_budget_needed <= weekly_budget,
+                "average_daily_calories": (meals["breakfast"]["calories"] + meals["lunch"]["calories"] + meals["dinner"]["calories"]) // 3
+            },
+            "shopping_list": shopping_list[:15],
+            "tips": tips
+        }
+    }
+
+@app.get("/api/diet/preferences")
+def get_diet_preferences(user_id: int = 1):
+    conn = get_db(); c = conn.cursor()
+    c.execute("SELECT diet_pref FROM users WHERE id = ?", (user_id,))
+    user = c.fetchone()
+    conn.close()
+    return {"diet_pref": user["diet_pref"] if user else "vegetarian"}
+
+@app.post("/api/diet/preferences")
+def save_diet_preferences(pref: dict, user_id: int = 1):
+    diet_pref = pref.get("diet_pref", "vegetarian")
+    conn = get_db(); c = conn.cursor()
+    c.execute("UPDATE users SET diet_pref = ? WHERE id = ?", (diet_pref, user_id))
+    conn.commit(); conn.close()
+    return {"message": "Preferences saved"}
