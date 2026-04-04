@@ -2,694 +2,175 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>RO•SORA • Sign up / Sign in — Culinary AI</title>
-    <!-- Google Fonts + Font Awesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            min-height: 100vh;
-            background: linear-gradient(145deg, #fef9f0 0%, #f2ebe5 100%);
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        /* soft animated blobs (culinary warm tones) */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 320px;
-            height: 320px;
-            background: radial-gradient(circle, rgba(255,107,107,0.12) 0%, rgba(78,205,196,0.08) 80%);
-            border-radius: 50%;
-            top: -80px;
-            left: -80px;
-            z-index: 0;
-            filter: blur(70px);
-        }
-
-        body::after {
-            content: '';
-            position: absolute;
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(255,179,71,0.1) 0%, rgba(255,107,107,0.05) 80%);
-            border-radius: 50%;
-            bottom: -120px;
-            right: -120px;
-            z-index: 0;
-            filter: blur(80px);
-        }
-
-        /* main container with tabs */
-        .auth-container {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.97);
-            backdrop-filter: blur(3px);
-            border-radius: 2rem;
-            box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255,255,240,0.6);
-            overflow: hidden;
-            transition: all 0.2s ease;
-        }
-
-        .card-inner {
-            padding: 2rem 2rem 2.2rem;
-        }
-
-        /* tab navigation */
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            background: #f1f5f9;
-            padding: 0.4rem;
-            border-radius: 3rem;
-            margin-bottom: 2rem;
-        }
-
-        .tab-btn {
-            flex: 1;
-            text-align: center;
-            background: transparent;
-            border: none;
-            font-weight: 600;
-            font-size: 1rem;
-            padding: 0.7rem 0;
-            border-radius: 2rem;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            color: #5b6e8c;
-            transition: all 0.2s ease;
-        }
-
-        .tab-btn i {
-            margin-right: 0.4rem;
-            font-size: 0.9rem;
-        }
-
-        .tab-btn.active {
-            background: white;
-            color: #ff7a7a;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            border: 1px solid #ffe0e0;
-        }
-
-        /* forms wrapper */
-        .forms-container {
-            position: relative;
-        }
-
-        .auth-form {
-            transition: opacity 0.25s ease, visibility 0.25s;
-        }
-
-        .auth-form.hidden {
-            display: none;
-        }
-
-        /* brand header inside card - NEW LOGO & NAME without dot */
-        .brand {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .brand-logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 0.8rem auto;
-            background: linear-gradient(135deg, #FF6B6B, #4ECDC4, #FFB347);
-            border-radius: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 15px 25px -10px rgba(255,107,107,0.4);
-            transition: transform 0.2s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .brand-logo::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.3), transparent);
-        }
-        
-        .brand-logo i {
-            font-size: 2.8rem;
-            color: white;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
-            z-index: 2;
-        }
-
-        /* ROSORA wordmark — NO DOT, clean and bold */
-        .brand h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 45%, #FFB347 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
-            margin-bottom: 0.25rem;
-        }
-        
-        .brand h1 .rosora-text {
-            background: linear-gradient(135deg, #FF6B6B, #4ECDC4, #FFB347);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.5px;
-        }
-        
-        /* subtle highlight */
-        .brand h1::after {
-            display: none;
-        }
-
-        .tagline {
-            color: #5b6e8c;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 0.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            background: rgba(255,107,107,0.08);
-            padding: 0.3rem 0.9rem;
-            border-radius: 2rem;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .feature-strip {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.5rem;
-            margin: 0.8rem 0 1rem;
-        }
-
-        .feature-strip span {
-            background: #f8f9fc;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            color: #2c3e66;
-            border: 1px solid #ffefef;
-            transition: all 0.2s;
-        }
-        
-        .feature-strip span i {
-            margin-right: 4px;
-            font-size: 0.6rem;
-            color: #FF6B6B;
-        }
-
-        /* input groups */
-        .input-group {
-            margin-bottom: 1.2rem;
-            position: relative;
-        }
-
-        .input-group i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            font-size: 1rem;
-            pointer-events: none;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 0.85rem 1rem 0.85rem 2.8rem;
-            font-size: 0.95rem;
-            font-weight: 500;
-            background: #ffffff;
-            border: 1.5px solid #e9edf2;
-            border-radius: 1.2rem;
-            color: #1e293b;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.2s;
-            outline: none;
-        }
-
-        .input-group input:focus {
-            border-color: #ff7a7a;
-            box-shadow: 0 0 0 3px rgba(255, 122, 122, 0.15);
-        }
-
-        .password-wrapper {
-            position: relative;
-        }
-
-        .toggle-pw {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            cursor: pointer;
-            font-size: 1rem;
-            z-index: 2;
-        }
-
-        .strength-meter {
-            margin-top: 0.4rem;
-            height: 4px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .strength-fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #ff7a7a, #6be5c2);
-            transition: width 0.2s;
-        }
-
-        .strength-text, .match-hint {
-            font-size: 0.7rem;
-            margin-top: 0.3rem;
-            text-align: right;
-            color: #64748b;
-        }
-
-        .match-hint {
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .match-hint.valid { color: #10b981; }
-        .match-hint.invalid { color: #ef4444; }
-
-        .auth-btn {
-            width: 100%;
-            background: linear-gradient(105deg, #ff7a7a, #6be5c2);
-            border: none;
-            padding: 0.9rem;
-            border-radius: 1.8rem;
-            font-size: 1rem;
-            font-weight: 700;
-            color: white;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6rem;
-            margin-top: 0.5rem;
-            box-shadow: 0 6px 14px rgba(255, 122, 122, 0.2);
-        }
-
-        .auth-btn:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.02);
-            box-shadow: 0 10px 20px rgba(107,229,194,0.3);
-        }
-
-        .forgot-link {
-            text-align: right;
-            margin-top: 0.4rem;
-            font-size: 0.7rem;
-        }
-
-        .forgot-link a {
-            color: #ff7a7a;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .toast-message {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%) scale(0.9);
-            background: #1e293b;
-            color: white;
-            padding: 0.7rem 1.5rem;
-            border-radius: 3rem;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.2s;
-            backdrop-filter: blur(8px);
-            background: rgba(30, 41, 59, 0.95);
-            font-weight: 500;
-        }
-
-        .toast-message.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) scale(1);
-        }
-
-        @media (max-width: 500px) {
-            .card-inner { padding: 1.5rem; }
-            .brand h1 { font-size: 2rem; }
-            .tab-btn { font-size: 0.85rem; }
-            .brand-logo { width: 70px; height: 70px; }
-            .brand-logo i { font-size: 2.3rem; }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RASORA - Smart Kitchen Dashboard</title>
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
-
-<div class="auth-container">
-    <div class="card">
-        <div class="card-inner">
-            <!-- brand area with updated logo + ROSORA (NO DOT) and previous image features -->
-            <div class="brand">
-                <div class="brand-logo">
-                    <i class="fas fa-utensil-spoon"></i>
-                </div>
-                <h1>
-                    <span class="rosora-text">ROSORA</span>
-                </h1>
-                <div class="tagline">
-                    <i class="fas fa-infinity"></i> ONE APP. INFINITE POSSIBILITIES. <i class="fas fa-meteor"></i>
-                </div>
-                <div class="feature-strip">
-                    <span><i class="fas fa-shopping-basket"></i> SHOPPING</span>
-                    <span><i class="fas fa-brain"></i> SMART RECIPES</span>
-                    <span><i class="fas fa-robot"></i> AI</span>
-                    <span><i class="fas fa-step-forward"></i> STEP-BY-STEP</span>
-                    <span><i class="fas fa-fire"></i> COOKING OPTIMIZER</span>
-                    <span><i class="fas fa-tag"></i> PRICE</span>
-                    <span><i class="fas fa-heart"></i> FOODLOVERS</span>
-                    <span><i class="fas fa-users"></i> COMMUNITY</span>
-                </div>
-            </div>
-
-            <!-- Tab buttons -->
-            <div class="tabs">
-                <button class="tab-btn active" id="tabSignupBtn"><i class="fas fa-user-plus"></i> Sign up</button>
-                <button class="tab-btn" id="tabSigninBtn"><i class="fas fa-sign-in-alt"></i> Sign in</button>
-            </div>
-
-            <div class="forms-container">
-                <!-- SIGN UP FORM -->
-                <div id="signupFormContainer" class="auth-form">
-                    <form id="signupForm" novalidate>
-                        <div class="input-group">
-                            <i class="fas fa-user"></i>
-                            <input type="text" id="fullName" placeholder="Full name" autocomplete="name">
-                        </div>
-                        <div class="input-group">
-                            <i class="fas fa-envelope"></i>
-                            <input type="email" id="signupEmail" placeholder="Email address" autocomplete="email">
-                        </div>
-                        <div class="input-group password-wrapper">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="signupPassword" placeholder="Password" autocomplete="new-password">
-                            <button type="button" class="toggle-pw toggleSignupPw" aria-label="Show password"><i class="far fa-eye-slash"></i></button>
-                        </div>
-                        <div class="strength-meter"><div class="strength-fill" id="strengthFill"></div></div>
-                        <div class="strength-text" id="strengthText">⚡ at least 6 characters</div>
-
-                        <div class="input-group password-wrapper">
-                            <i class="fas fa-check-circle"></i>
-                            <input type="password" id="confirmPassword" placeholder="Confirm password">
-                        </div>
-                        <div class="match-hint" id="matchHint"><i class="fas fa-info-circle"></i> <span>passwords must match</span></div>
-
-                        <button type="submit" class="auth-btn" id="signupSubmitBtn"><i class="fas fa-paper-plane"></i> Create account</button>
-                    </form>
-                </div>
-
-                <!-- SIGN IN FORM -->
-                <div id="signinFormContainer" class="auth-form hidden">
-                    <form id="signinForm" novalidate>
-                        <div class="input-group">
-                            <i class="fas fa-envelope"></i>
-                            <input type="email" id="signinEmail" placeholder="Email address" autocomplete="email">
-                        </div>
-                        <div class="input-group password-wrapper">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="signinPassword" placeholder="Password">
-                            <button type="button" class="toggle-pw toggleSigninPw" aria-label="Show password"><i class="far fa-eye-slash"></i></button>
-                        </div>
-                        <div class="forgot-link"><a href="#" id="forgotMock">Forgot password?</a></div>
-                        <button type="submit" class="auth-btn" id="signinSubmitBtn"><i class="fas fa-arrow-right-to-bracket"></i> Sign in</button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="feature-strip" style="margin-top: 1.2rem; border-top: 1px solid #ffefef; padding-top: 0.8rem;">
-                <span><i class="fas fa-egg"></i> AI chef</span>
-                <span><i class="fas fa-chart-line"></i> Smart cart</span>
-                <span><i class="fas fa-globe"></i> Food community</span>
+    <div class="dashboard">
+        <div class="logo-area">
+            <div class="logo">RASORA</div>
+            <div class="tagline">स्मार्ट रसोई</div>
+        </div>
+        <div class="nav-menu">
+            <div class="nav-item active" data-section="home"><div class="nav-icon">🏠</div><span>Dashboard</span></div>
+            <div class="nav-item" data-section="shopping"><div class="nav-icon">🛒</div><span>Manual Shopping</span></div>
+            <div class="nav-item" data-section="cart"><div class="nav-icon">🛒</div><span>My Cart</span></div>
+            <div class="nav-item" data-section="smart"><div class="nav-icon">🤖</div><span>AI Smart Shop</span></div>
+            <div class="nav-item" data-section="recipe"><div class="nav-icon">🍳</div><span>AI Recipe Chef</span></div>
+            <div class="nav-item" data-section="expense"><div class="nav-icon">💰</div><span>Expense Tracker</span></div>
+            <div class="nav-item" data-section="community"><div class="nav-icon">👥</div><span>Foodie Community</span></div>
+            <div class="nav-item" data-section="reorder"><div class="nav-icon">🔄</div><span>Smart Reorder</span></div>
+            <div class="nav-item" data-section="dietary"><div class="nav-icon">🌱</div><span>Dietary Prefs</span></div>
+        </div>
+        <div class="profile-section">
+            <div class="profile-icon">P</div>
+            <div class="profile-info">
+                <h4>Piyush Aggarwal</h4>
+                <p>Team Phantom Stack</p>
+                <button onclick="logout()" style="background:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:0.8rem; cursor:pointer;">Logout</button>
             </div>
         </div>
     </div>
-</div>
+    <div class="main-content">
+        <!-- HOME -->
+        <div id="home" class="section active-section">
+            <div class="welcome-banner">
+                <h1>Good Morning, Piyush! 👋</h1>
+                <p>Ready to cook something amazing today?</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-info"><h4>Pocket Balance</h4><div class="value" id="dashBalance">₹10,000</div><small>⬇️ ₹0 spent today</small></div></div>
+                <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-info"><h4>Orders This Month</h4><div class="value" id="dashOrders">0</div><small>🔄 0 recurring items</small></div></div>
+                <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-info"><h4>Community</h4><div class="value" id="dashPosts">0</div><small>❤️ 0 total likes</small></div></div>
+                <div class="stat-card"><div class="stat-icon">🍳</div><div class="stat-info"><h4>Recipes Available</h4><div class="value" id="dashRecipes">0</div><small>🍽️ Try new dishes</small></div></div>
+            </div>
+            <div class="two-columns">
+                <div class="card"><h3>📋 Recent Expenses</h3><div id="recentExpensesList"><p>Loading...</p></div><button class="btn-primary" onclick="goToSection('expense')">View All →</button></div>
+                <div class="card"><h3>📊 Weekly Budget</h3><div><span>Budget: ₹2,000</span><span>Spent: ₹0</span><span>Remaining: ₹2,000</span></div><div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div><div>🎯 Set a budget to track spending!</div></div>
+            </div>
+            <div class="two-columns">
+                <div class="card"><h3>🍳 Trending Recipes</h3><div id="trendingRecipes"><p>Loading...</p></div></div>
+                <div class="card"><h3>🔄 Smart Reorder</h3><div id="smartReorderList"><p>Loading...</p></div></div>
+            </div>
+            <div class="card"><h3>👥 Community Highlights</h3><div id="communityHighlights"><p>Loading...</p></div><button class="btn-primary" onclick="goToSection('community')">Join Community →</button></div>
+        </div>
 
-<div id="toastMsg" class="toast-message"><i class="fas fa-bell"></i> <span id="toastText">Message</span></div>
+        <!-- MANUAL SHOPPING -->
+        <div id="shopping" class="section">
+            <div class="card"><h2>🛒 Manual Shopping</h2><p>Browse categories or see all products below</p></div>
+            <div class="card">
+                <h3>Categories</h3>
+                <div class="category-grid" id="categoryGrid">
+                    <div class="category-item" data-cat="Dairy">🥛 Dairy</div>
+                    <div class="category-item" data-cat="Bakery">🍞 Bakery</div>
+                    <div class="category-item" data-cat="Vegetables">🥦 Vegetables</div>
+                    <div class="category-item" data-cat="Fruits">🍎 Fruits</div>
+                    <div class="category-item" data-cat="Eggs">🥚 Eggs</div>
+                    <div class="category-item" data-cat="Chicken">🍗 Chicken</div>
+                    <div class="category-item" data-cat="Meat">🥩 Meat</div>
+                    <div class="category-item" data-cat="Fish">🐟 Fish</div>
+                    <div class="category-item" data-cat="Snacks">🍿 Snacks</div>
+                    <div class="category-item" data-cat="Frozen">🧊 Frozen</div>
+                </div>
+                <div id="productResults" style="margin-top:1.5rem;"></div>
+            </div>
+        </div>
 
-<script>
-    (function() {
-        // ----- DOM elements -----
-        const tabSignup = document.getElementById('tabSignupBtn');
-        const tabSignin = document.getElementById('tabSigninBtn');
-        const signupContainer = document.getElementById('signupFormContainer');
-        const signinContainer = document.getElementById('signinFormContainer');
-        
-        // signup fields
-        const fullName = document.getElementById('fullName');
-        const signupEmail = document.getElementById('signupEmail');
-        const signupPassword = document.getElementById('signupPassword');
-        const confirmPw = document.getElementById('confirmPassword');
-        const signupForm = document.getElementById('signupForm');
-        const strengthFill = document.getElementById('strengthFill');
-        const strengthText = document.getElementById('strengthText');
-        const matchHintDiv = document.getElementById('matchHint');
-        
-        // signin fields
-        const signinEmail = document.getElementById('signinEmail');
-        const signinPassword = document.getElementById('signinPassword');
-        const signinForm = document.getElementById('signinForm');
-        
-        // toggles
-        const toggleSignupPw = document.querySelector('.toggleSignupPw');
-        const toggleSigninPw = document.querySelector('.toggleSigninPw');
-        
-        // toast
-        const toast = document.getElementById('toastMsg');
-        const toastText = document.getElementById('toastText');
-        
-        function showToast(message, isError = false) {
-            toastText.innerText = message;
-            toast.classList.add('show');
-            const icon = toast.querySelector('i');
-            if (icon) icon.className = isError ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle';
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-        
-        // ----- PASSWORD STRENGTH (signup) -----
-        function updateStrength() {
-            const val = signupPassword.value;
-            if (!val.length) { strengthFill.style.width = '0%'; strengthText.innerHTML = '⚡ enter a password'; strengthText.style.color = '#64748b'; return; }
-            let strength = 0;
-            if (val.length >= 6) strength++;
-            if (val.length >= 8) strength++;
-            if (/[A-Z]/.test(val)) strength++;
-            if (/[0-9]/.test(val)) strength++;
-            if (/[^A-Za-z0-9]/.test(val)) strength++;
-            let percent = Math.min(100, strength * 20);
-            strengthFill.style.width = `${percent}%`;
-            if (val.length < 6) { strengthText.innerHTML = '❌ weak — min 6 chars'; strengthText.style.color = '#ef4444'; }
-            else if (strength >= 3) { strengthText.innerHTML = '✅ strong password'; strengthText.style.color = '#10b981'; }
-            else { strengthText.innerHTML = '👍 decent — add numbers/symbols'; strengthText.style.color = '#f59e0b'; }
-        }
-        
-        function updateMatch() {
-            const pw = signupPassword.value;
-            const conf = confirmPw.value;
-            if (!conf) { matchHintDiv.innerHTML = '<i class="fas fa-info-circle"></i> <span>confirm your password</span>'; matchHintDiv.classList.remove('valid','invalid'); return; }
-            if (pw === conf) { matchHintDiv.innerHTML = '<i class="fas fa-check-circle"></i> <span>passwords match ✓</span>'; matchHintDiv.classList.add('valid'); matchHintDiv.classList.remove('invalid'); }
-            else { matchHintDiv.innerHTML = '<i class="fas fa-times-circle"></i> <span>passwords do not match</span>'; matchHintDiv.classList.add('invalid'); matchHintDiv.classList.remove('valid'); }
-        }
-        
-        signupPassword.addEventListener('input', () => { updateStrength(); updateMatch(); });
-        confirmPw.addEventListener('input', updateMatch);
-        
-        // toggle password visibility
-        if (toggleSignupPw) {
-            toggleSignupPw.addEventListener('click', () => {
-                const type = signupPassword.type === 'password' ? 'text' : 'password';
-                signupPassword.type = type;
-                toggleSignupPw.querySelector('i').className = type === 'password' ? 'far fa-eye-slash' : 'far fa-eye';
-            });
-        }
-        if (toggleSigninPw) {
-            toggleSigninPw.addEventListener('click', () => {
-                const type = signinPassword.type === 'password' ? 'text' : 'password';
-                signinPassword.type = type;
-                toggleSigninPw.querySelector('i').className = type === 'password' ? 'far fa-eye-slash' : 'far fa-eye';
-            });
-        }
-        
-        // ----- VALIDATION SIGNUP -----
-        function validateSignup() {
-            const name = fullName.value.trim();
-            const email = signupEmail.value.trim();
-            const pass = signupPassword.value;
-            const confirm = confirmPw.value;
-            if (!name) { showToast('Please enter your full name', true); fullName.focus(); return false; }
-            if (!email) { showToast('Email is required', true); signupEmail.focus(); return false; }
-            const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
-            if (!emailRegex.test(email)) { showToast('Enter a valid email address', true); signupEmail.focus(); return false; }
-            if (!pass) { showToast('Create a password', true); signupPassword.focus(); return false; }
-            if (pass.length < 6) { showToast('Password must be at least 6 characters', true); signupPassword.focus(); return false; }
-            if (pass !== confirm) { showToast('Passwords do not match', true); confirmPw.focus(); return false; }
-            return true;
-        }
-        
-        // ----- SIGNUP HANDLER (store in localStorage) -----
-        async function handleSignup(e) {
-            e.preventDefault();
-            if (!validateSignup()) return;
-            const btn = document.getElementById('signupSubmitBtn');
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Creating...';
-            btn.disabled = true;
-            await new Promise(r => setTimeout(r, 1000));
-            // store user
-            const user = { name: fullName.value.trim(), email: signupEmail.value.trim(), joined: new Date().toISOString() };
-            localStorage.setItem('rosora_user', JSON.stringify(user));
-            localStorage.setItem('rosora_logged_in', 'true');
-            showToast(`🍳 Welcome ${fullName.value.trim().split(' ')[0]}! Your ROSORA journey starts.`, false);
-            btn.innerHTML = '<i class="fas fa-check"></i> Success!';
-            setTimeout(() => {
-                if (confirm('🎉 Account created! Would you like to reset the signup form? (Demo)')) {
-                    fullName.value = ''; signupEmail.value = ''; signupPassword.value = ''; confirmPw.value = '';
-                    updateStrength(); updateMatch();
-                    btn.innerHTML = originalHtml;
-                    btn.disabled = false;
-                    localStorage.removeItem('rosora_user');
-                    localStorage.removeItem('rosora_logged_in');
-                    showToast('Form reset, ready for next food lover', false);
-                } else {
-                    btn.innerHTML = originalHtml;
-                    btn.disabled = false;
-                    showToast('🔓 You are now part of ROSORA community!', false);
-                }
-            }, 1800);
-        }
-        
-        // ----- SIGNIN HANDLER (demo: checks email & stored user)-----
-        async function handleSignin(e) {
-            e.preventDefault();
-            const email = signinEmail.value.trim();
-            const password = signinPassword.value;
-            if (!email) { showToast('Enter your email address', true); signinEmail.focus(); return; }
-            if (!password) { showToast('Enter your password', true); signinPassword.focus(); return; }
-            const storedUserRaw = localStorage.getItem('rosora_user');
-            let valid = false;
-            let userName = 'Foodie';
-            if (storedUserRaw) {
-                try {
-                    const user = JSON.parse(storedUserRaw);
-                    if (user.email === email) valid = true;
-                    userName = user.name.split(' ')[0];
-                } catch(e) {}
-            }
-            // also allow demo@rosora.com for showcase
-            if (!valid && email === 'demo@rosora.com') valid = true;
-            if (!valid && email === 'chef@rosora.com') valid = true;
-            
-            const btn = document.getElementById('signinSubmitBtn');
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Signing in...';
-            btn.disabled = true;
-            await new Promise(r => setTimeout(r, 800));
-            if (valid || (email.length > 3 && password.length > 0)) {
-                localStorage.setItem('rosora_logged_in', 'true');
-                if (!storedUserRaw && email !== 'demo@rosora.com') {
-                    localStorage.setItem('rosora_user', JSON.stringify({ name: email.split('@')[0], email: email }));
-                }
-                showToast(`🍜 Welcome back, ${email.split('@')[0]}! AI recipes ready.`, false);
-                btn.innerHTML = '<i class="fas fa-check-circle"></i> Logged in';
-                setTimeout(() => {
-                    btn.innerHTML = originalHtml;
-                    btn.disabled = false;
-                    showToast('✨ Explore ROSORA — Smart Cooking Assistant', false);
-                }, 1500);
-            } else {
-                showToast('No account found. Please sign up first.', true);
-                btn.innerHTML = originalHtml;
-                btn.disabled = false;
-            }
-        }
-        
-        // ----- TAB SWITCHING -----
-        function setActiveTab(tab) {
-            if (tab === 'signup') {
-                tabSignup.classList.add('active');
-                tabSignin.classList.remove('active');
-                signupContainer.classList.remove('hidden');
-                signinContainer.classList.add('hidden');
-            } else {
-                tabSignin.classList.add('active');
-                tabSignup.classList.remove('active');
-                signinContainer.classList.remove('hidden');
-                signupContainer.classList.add('hidden');
-            }
-        }
-        
-        tabSignup.addEventListener('click', () => setActiveTab('signup'));
-        tabSignin.addEventListener('click', () => setActiveTab('signin'));
-        
-        // Forgot password mock
-        document.getElementById('forgotMock')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            showToast('📧 Password reset link would be sent to your email (demo)', false);
-        });
-        
-        // attach events
-        signupForm.addEventListener('submit', handleSignup);
-        signinForm.addEventListener('submit', handleSignin);
-        
-        // initial strength and match
-        updateStrength();
-        updateMatch();
-    })();
-</script>
+        <!-- MY CART -->
+        <div id="cart" class="section">
+            <div class="card"><h2>🛒 My Orders</h2></div>
+            <div id="cartItemsContainer"><p>Loading...</p></div>
+        </div>
+
+        <!-- AI SMART SHOP -->
+        <div id="smart" class="section">
+            <div class="card smart-card">
+                <h2>🤖 AI Smart Shopping</h2>
+                <p>Enter items and let RASORA auto-scan top offers & best store deals. Results appear instantly with quick cart add.</p>
+                <div class="smart-summary" id="smartSummary">Enter your list to see instant deal match information.</div>
+            </div>
+            <div class="card">
+                <h3>📝 Type Your List</h3>
+                <div class="input-group">
+                    <textarea id="groceryList" rows="4" placeholder="e.g., milk, bread, eggs, chicken" style="width:100%; padding:12px; border:1px solid #e9edf2; border-radius:12px; outline:none; resize:vertical;"></textarea>
+                </div>
+                <button class="btn-primary" onclick="processSmartList()" style="margin-top:1rem;">✨ AI Process List → Best Prices</button>
+                <div id="smartResult" style="margin-top:1rem;"></div>
+            </div>
+            <div class="card">
+                <h3>📷 Upload Image List</h3>
+                <div class="upload-area" onclick="document.getElementById('imageUpload').click()">📸 Click to upload grocery list image</div>
+                <input type="file" id="imageUpload" accept="image/*" style="display:none;" onchange="uploadImageList()">
+                <div id="imageResult"></div>
+            </div>
+        </div>
+
+        <!-- AI RECIPE CHEF -->
+        <div id="recipe" class="section">
+            <div class="card"><h2>🍳 AI Recipe Chef</h2><p>Powered by Google Gemini AI – Ask anything about cooking!</p></div>
+            <div class="card">
+                <h3>💬 Ask RASORA AI</h3>
+                <div style="display:flex; gap:0.5rem;"><input type="text" id="geminiQuestion" placeholder="e.g., How to make paneer butter masala?" style="flex:1; padding:12px;"><button class="btn-primary" onclick="askGemini()">Ask AI</button></div>
+                <div id="geminiResult"></div>
+            </div>
+            <div class="card">
+                <h3>🔍 Or search from our recipe database</h3>
+                <div style="display:flex; gap:1rem;"><input type="text" id="dishName" list="recipeList" placeholder="Dish name" style="flex:1;"><datalist id="recipeList"></datalist><button class="btn-primary" onclick="getRecipeByDish()">Get Recipe</button></div>
+                <div id="dishRecipeResult"></div>
+            </div>
+            <div class="card">
+                <h3>🥗 Search by Ingredients</h3>
+                <div style="display:flex; gap:1rem;"><input type="text" id="ingredientsInput" placeholder="e.g., aloo, pyaaz" style="flex:1;"><button class="btn-primary" onclick="getRecipeByIngredients()">What Can I Cook?</button></div>
+                <div id="ingredientsRecipeResult"></div>
+            </div>
+        </div>
+
+        <!-- EXPENSE TRACKER -->
+        <div id="expense" class="section">
+            <div class="card expense-card"><h2>💰 Expense Tracker</h2><p>Track your spending with smart budget control</p></div>
+            <div class="card">
+                <h3>📊 Current Status</h3>
+                <div class="budget-row">
+                    <label>Set Weekly Budget: ₹</label>
+                    <input type="number" id="expBudgetInput" min="0" value="10000" style="width:120px;margin-right:0.5rem;">
+                    <button class="btn-primary" onclick="updateBudget()">Save Budget</button>
+                </div>
+                <div class="status-box">
+                    <p>💰 Budget: ₹<span id="expTotalBudget">10000</span></p>
+                    <p>🛒 Spent: ₹<span id="expTotalExpense">0</span></p>
+                    <p>✅ Remaining: ₹<span id="expRemaining">10000</span></p>
+                </div>
+                <h3>➕ Add Expense</h3>
+                <div class="expense-inputs"><input type="text" id="expenseItem" placeholder="Item"><input type="number" id="expenseAmount" placeholder="Amount"><button class="btn-primary" onclick="addExpense()">Add</button></div>
+                <h3>📜 Expense History</h3>
+                <div id="expenseHistory"></div>
+            </div>
+        </div>
+
+        <!-- COMMUNITY -->
+        <div id="community" class="section">
+            <div class="card"><h2>👥 Foodie Community</h2><button class="btn-primary" onclick="shareRecipe()">✨ Share Your Recipe</button></div>
+            <div id="communityPosts"></div>
+        </div>
+
+        <!-- SMART REORDER -->
+        <div id="reorder" class="section">
+            <div class="card"><h2>🔄 Smart Reorder Suggestions</h2></div>
+            <div class="card" id="reorderSuggestions"></div>
+        </div>
+
+        <!-- DIETARY PREFS -->
+        <div id="dietary" class="section">
+            <div class="card"><h2>🌱 Dietary Personalization</h2>
+                <div class="diet-buttons">
+                    <button id="dietVegBtn" class="diet-btn active">🌿 Veg</button>
+                    <button id="dietNonVegBtn" class="diet-btn">🍗 Non-Veg</button>
+                </div>
+                <div id="dietStatus">Current diet: <strong>Veg</strong></div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -12,7 +12,7 @@ def get_db():
     return conn
 
 app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=[""], allow_methods=[""], allow_headers=["*"])
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 # Database setup
 def create_tables():
@@ -34,7 +34,7 @@ def create_tables():
         unit TEXT NOT NULL,
         store TEXT NOT NULL,
         image TEXT,
-        diet_type TEXT DEFAULT 'vegetarian'
+        diet_type TEXT DEFAULT 'veg'
     )''')
     c.execute('''CREATE TABLE IF NOT EXISTS orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -74,46 +74,70 @@ def create_tables():
     conn.commit()
     conn.close()
 
-# Add diet_type column if not exists
-conn = get_db()
-c = conn.cursor()
-try:
-    c.execute("ALTER TABLE products ADD COLUMN diet_type TEXT DEFAULT 'vegetarian'")
-except sqlite3.OperationalError:
-    pass  # column already exists
-conn.commit()
-conn.close()
-
 def insert_sample_products():
     conn = get_db()
     c = conn.cursor()
     products = [
-        ("Fresh Milk 1L", "Dairy", 55, "1L", "Zepto", "https://placehold.co/50x50?text=🥛", "vegetarian"),
-        ("Amul Milk 1L", "Dairy", 60, "1L", "Blinkit", "https://placehold.co/50x50?text=🥛", "vegetarian"),
-        ("Brown Bread", "Bakery", 40, "400g", "Blinkit", "https://placehold.co/50x50?text=🍞", "vegetarian"),
-        ("Paneer 200g", "Dairy", 70, "200g", "Local", "https://placehold.co/50x50?text=🧀", "vegetarian"),
-        ("Eggs 6pcs", "Dairy", 45, "6pcs", "Instamart", "https://placehold.co/50x50?text=🥚", "vegetarian"),
-        ("Tomato 500g", "Vegetables", 30, "500g", "BigBasket", "https://placehold.co/50x50?text=🍅", "vegetarian"),
-        ("Onion 500g", "Vegetables", 25, "500g", "Local", "https://placehold.co/50x50?text=🧅", "vegetarian"),
-        ("Potato 500g", "Vegetables", 20, "500g", "Zepto", "https://placehold.co/50x50?text=🥔", "vegetarian"),
-        ("Apple 1kg", "Fruits", 120, "1kg", "Blinkit", "https://placehold.co/50x50?text=🍎", "vegetarian"),
-        ("Banana 6pcs", "Fruits", 40, "6pcs", "Local", "https://placehold.co/50x50?text=🍌", "vegetarian"),
-        ("Orange", "Fruits", 80, "1kg", "Instamart", "https://placehold.co/50x50?text=🍊", "vegetarian"),
-        ("Capsicum", "Vegetables", 40, "250g", "BigBasket", "https://placehold.co/50x50?text=🫑", "vegetarian"),
-        ("Garlic", "Vegetables", 20, "100g", "Local", "https://placehold.co/50x50?text=🧄", "vegetarian"),
-        ("Ginger", "Vegetables", 25, "100g", "Zepto", "https://placehold.co/50x50?text=🫚", "vegetarian"),
-        ("Basmati Rice 1kg", "Grocery", 120, "1kg", "Blinkit", "https://placehold.co/50x50?text=🍚", "vegetarian"),
-        ("Toor Dal 500g", "Grocery", 80, "500g", "Instamart", "https://placehold.co/50x50?text=🫘", "vegetarian"),
-        ("Tea 250g", "Beverages", 150, "250g", "Zepto", "https://placehold.co/50x50?text=🍵", "vegetarian"),
-        ("Maggi Noodles", "Snacks", 15, "70g", "Local", "https://placehold.co/50x50?text=🍜", "vegetarian"),
-        ("Frozen Peas", "Frozen", 40, "500g", "Blinkit", "https://placehold.co/50x50?text=🟢", "vegetarian"),
-        ("Gulab Jamun Mix", "Dessert", 50, "200g", "BigBasket", "https://placehold.co/50x50?text=🍡", "vegetarian"),
-        ("Farm Fresh Eggs 12pcs", "Eggs", 80, "12pcs", "Local", "https://placehold.co/50x50?text=🥚", "vegetarian"),
-        ("Organic Eggs 6pcs", "Eggs", 60, "6pcs", "Zepto", "https://placehold.co/50x50?text=🥚", "vegetarian"),
-        ("Country Eggs 6pcs", "Eggs", 50, "6pcs", "Blinkit", "https://placehold.co/50x50?text=🥚", "vegetarian"),
-        ("Chicken Breast 500g", "Chicken", 200, "500g", "Local", "https://placehold.co/50x50?text=🍗", "non-vegetarian"),
-        ("Chicken Thigh 500g", "Chicken", 180, "500g", "BigBasket", "https://placehold.co/50x50?text=🍗", "non-vegetarian"),
-        ("Chicken Drumstick 500g", "Chicken", 220, "500g", "Instamart", "https://placehold.co/50x50?text=🍗", "non-vegetarian"),
+        # Dairy (veg)
+        ("Fresh Milk 1L", "Dairy", 55, "1L", "Zepto", "https://placehold.co/50x50?text=🥛", "veg"),
+        ("Amul Milk 1L", "Dairy", 60, "1L", "Blinkit", "https://placehold.co/50x50?text=🥛", "veg"),
+        ("Paneer 200g", "Dairy", 70, "200g", "Local", "https://placehold.co/50x50?text=🧀", "veg"),
+        ("Curd 500g", "Dairy", 35, "500g", "Zepto", "https://placehold.co/50x50?text=🥄", "veg"),
+        ("Butter 100g", "Dairy", 50, "100g", "Blinkit", "https://placehold.co/50x50?text=🧈", "veg"),
+        ("Cheese Slice 6pcs", "Dairy", 80, "6pcs", "Instamart", "https://placehold.co/50x50?text=🧀", "veg"),
+        
+        # Bakery (veg)
+        ("Brown Bread", "Bakery", 40, "400g", "Blinkit", "https://placehold.co/50x50?text=🍞", "veg"),
+        ("White Bread", "Bakery", 35, "400g", "Zepto", "https://placehold.co/50x50?text=🍞", "veg"),
+        ("Pav 6pcs", "Bakery", 25, "6pcs", "Local", "https://placehold.co/50x50?text=🍞", "veg"),
+        ("Croissant", "Bakery", 35, "1pc", "Blinkit", "https://placehold.co/50x50?text=🥐", "veg"),
+        ("Pizza Base", "Bakery", 45, "1pc", "Local", "https://placehold.co/50x50?text=🍕", "veg"),
+        
+        # Vegetables (veg)
+        ("Tomato 500g", "Vegetables", 30, "500g", "BigBasket", "https://placehold.co/50x50?text=🍅", "veg"),
+        ("Onion 500g", "Vegetables", 25, "500g", "Local", "https://placehold.co/50x50?text=🧅", "veg"),
+        ("Potato 500g", "Vegetables", 20, "500g", "Zepto", "https://placehold.co/50x50?text=🥔", "veg"),
+        ("Capsicum 250g", "Vegetables", 40, "250g", "Blinkit", "https://placehold.co/50x50?text=🫑", "veg"),
+        ("Carrot 500g", "Vegetables", 30, "500g", "Instamart", "https://placehold.co/50x50?text=🥕", "veg"),
+        ("Cauliflower", "Vegetables", 35, "500g", "BigBasket", "https://placehold.co/50x50?text=🥦", "veg"),
+        ("Spinach 250g", "Vegetables", 20, "250g", "Local", "https://placehold.co/50x50?text=🥬", "veg"),
+        ("Garlic 100g", "Vegetables", 20, "100g", "Zepto", "https://placehold.co/50x50?text=🧄", "veg"),
+        ("Ginger 100g", "Vegetables", 25, "100g", "Blinkit", "https://placehold.co/50x50?text=🫚", "veg"),
+        ("Green Chilli 100g", "Vegetables", 15, "100g", "Local", "https://placehold.co/50x50?text=🌶️", "veg"),
+        
+        # Fruits (veg)
+        ("Apple 1kg", "Fruits", 120, "1kg", "Blinkit", "https://placehold.co/50x50?text=🍎", "veg"),
+        ("Banana 6pcs", "Fruits", 40, "6pcs", "Local", "https://placehold.co/50x50?text=🍌", "veg"),
+        ("Orange 1kg", "Fruits", 80, "1kg", "Instamart", "https://placehold.co/50x50?text=🍊", "veg"),
+        ("Grapes 500g", "Fruits", 90, "500g", "Zepto", "https://placehold.co/50x50?text=🍇", "veg"),
+        ("Pomegranate", "Fruits", 80, "1pc", "BigBasket", "https://placehold.co/50x50?text=🍎", "veg"),
+        
+        # Eggs (non-veg)
+        ("Eggs 6pcs", "Eggs", 45, "6pcs", "Instamart", "https://placehold.co/50x50?text=🥚", "nonveg"),
+        ("Eggs 12pcs", "Eggs", 85, "12pcs", "Zepto", "https://placehold.co/50x50?text=🥚", "nonveg"),
+        ("Organic Eggs 6pcs", "Eggs", 65, "6pcs", "Blinkit", "https://placehold.co/50x50?text=🥚", "nonveg"),
+        
+        # Chicken (non-veg)
+        ("Chicken Breast 500g", "Chicken", 180, "500g", "FreshMart", "https://placehold.co/50x50?text=🍗", "nonveg"),
+        ("Chicken Thigh 500g", "Chicken", 160, "500g", "MeatShop", "https://placehold.co/50x50?text=🍗", "nonveg"),
+        ("Chicken Curry Cut", "Chicken", 150, "500g", "LocalButcher", "https://placehold.co/50x50?text=🍗", "nonveg"),
+        
+        # Meat (non-veg)
+        ("Mutton 500g", "Meat", 350, "500g", "MeatShop", "https://placehold.co/50x50?text=🥩", "nonveg"),
+        ("Lamb Chops", "Meat", 400, "500g", "PremiumMeat", "https://placehold.co/50x50?text=🥩", "nonveg"),
+        
+        # Fish (non-veg)
+        ("Rohu Fish 500g", "Fish", 200, "500g", "FishMarket", "https://placehold.co/50x50?text=🐟", "nonveg"),
+        ("Prawns 250g", "Fish", 180, "250g", "Seafood", "https://placehold.co/50x50?text=🦐", "nonveg"),
+        
+        # Snacks (veg/non-veg)
+        ("Maggi Noodles", "Snacks", 15, "70g", "Local", "https://placehold.co/50x50?text=🍜", "veg"),
+        ("Lays Chips", "Snacks", 20, "50g", "Zepto", "https://placehold.co/50x50?text=🍟", "veg"),
+        ("Chicken Nuggets", "Snacks", 120, "200g", "FrozenFood", "https://placehold.co/50x50?text=🍗", "nonveg"),
+        
+        # Frozen (veg/non-veg)
+        ("Frozen Peas", "Frozen", 40, "500g", "Blinkit", "https://placehold.co/50x50?text=🟢", "veg"),
+        ("Frozen Chicken Wings", "Frozen", 150, "500g", "FrozenFood", "https://placehold.co/50x50?text=🍗", "nonveg"),
     ]
     c.executemany('''INSERT OR IGNORE INTO products (name, category, price, unit, store, image, diet_type) VALUES (?, ?, ?, ?, ?, ?, ?)''', products)
     conn.commit()
@@ -123,11 +147,14 @@ def insert_sample_recipes():
     conn = get_db()
     c = conn.cursor()
     recipes = [
-        ("Aloo Paratha", '["aloo", "atta", "pyaaz", "hari mirch", "masale"]', "Mix mashed potatoes with spices, knead dough, stuff and cook on tawa", "https://youtube.com/watch?v=aloo_paratha", "30 mins", "vegetarian"),
-        ("Paneer Butter Masala", '["paneer", "tamatar", "pyaaz", "cream", "kaju", "masale"]', "Saute onion tomato, add spices, cook paneer in gravy", "https://youtube.com/watch?v=paneer_masala", "40 mins", "vegetarian"),
-        ("Masala Dosa", '["dosa batter", "aloo", "pyaaz", "rai", "curry leaves"]', "Make dosa batter, prepare potato filling, cook on tawa", "https://youtube.com/watch?v=masala_dosa", "25 mins", "vegetarian"),
-        ("Dal Makhani", '["urad dal", "rajma", "butter", "cream", "pyaaz", "tamatar"]', "Slow cook dal overnight, add butter and cream, simmer", "https://youtube.com/watch?v=dal_makhani", "60 mins", "vegetarian"),
-        ("Vegetable Biryani", '["basmati rice", "mix veg", "pyaaz", "tamatar", "biryani masala"]', "Layer rice and vegetables with masala, dum cook", "https://youtube.com/watch?v=veg_biryani", "45 mins", "vegetarian"),
+        ("Aloo Paratha", '["aloo", "atta", "pyaaz", "hari mirch", "masale"]', "Mix mashed potatoes with spices, knead dough, stuff and cook on tawa", "https://youtu.be/F4I0MWxvQaA", "30 mins", "vegetarian"),
+        ("Paneer Butter Masala", '["paneer", "tamatar", "pyaaz", "cream", "kaju", "masale"]', "Saute onion tomato, add spices, cook paneer in gravy", "https://youtu.be/x1Tg6wYq-Ww", "40 mins", "vegetarian"),
+        ("Masala Dosa", '["dosa batter", "aloo", "pyaaz", "rai", "curry leaves"]', "Make dosa batter, prepare potato filling, cook on tawa", "https://youtu.be/ffClaNl0Z3g", "25 mins", "vegetarian"),
+        ("Dal Makhani", '["urad dal", "rajma", "butter", "cream", "pyaaz", "tamatar"]', "Slow cook dal overnight, add butter and cream, simmer", "https://youtu.be/RALdVZRcUwo", "60 mins", "vegetarian"),
+        ("Vegetable Biryani", '["basmati rice", "mix veg", "pyaaz", "tamatar", "biryani masala"]', "Layer rice and vegetables with masala, dum cook", "https://youtu.be/9nKbDvC0c3k", "45 mins", "vegetarian"),
+        ("Chicken Curry", '["chicken", "pyaaz", "tamatar", "ginger", "garlic", "chicken masala"]', "Cook chicken with onion tomato gravy and spices.", "https://youtu.be/4VnOqjQf1EM", "45 mins", "nonveg"),
+        ("Egg Curry", '["egg", "pyaaz", "tamatar", "coconut", "egg masala"]', "Boiled eggs cooked in spicy coconut gravy.", "https://youtu.be/21qntIjJh6g", "35 mins", "nonveg"),
+        ("Fish Curry", '["rohu fish", "pyaaz", "tamatar", "coconut", "fish masala"]', "Fish cooked in spicy tamarind coconut gravy.", "https://youtu.be/0R9h-Q5IhUc", "40 mins", "nonveg"),
     ]
     c.executemany('''INSERT OR IGNORE INTO recipes (name, ingredients, instructions, video_url, prep_time, diet_type) VALUES (?, ?, ?, ?, ?, ?)''', recipes)
     conn.commit()
@@ -143,7 +170,7 @@ GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.
 class Expense(BaseModel):
     item: str; amount: int; date: str
 class Order(BaseModel):
-    product_id: int; quantity: int; user_id: int = 1
+    product_id: int; quantity: int
 class Post(BaseModel):
     recipe_name: str; description: str
 class User(BaseModel):
@@ -167,7 +194,7 @@ def signup(user: User):
     return {"message": "User created", "user_id": user_id}
 
 @app.post("/api/login")
-def login(email: str, password: str):
+def login(email: str = Form(...), password: str = Form(...)):
     conn = get_db(); c = conn.cursor()
     c.execute("SELECT id, name, diet_pref FROM users WHERE email=? AND password=?", (email, password))
     user = c.fetchone()
@@ -188,9 +215,12 @@ def get_products(category: Optional[str]=None, diet: Optional[str]=None):
     return {"products": [dict(p) for p in products]}
 
 @app.get("/api/recipes")
-def get_recipes():
+def get_recipes(diet: Optional[str] = None):
     conn = get_db(); c = conn.cursor()
-    c.execute("SELECT * FROM recipes")
+    if diet:
+        c.execute("SELECT * FROM recipes WHERE diet_type = ?", (diet,))
+    else:
+        c.execute("SELECT * FROM recipes")
     recipes = c.fetchall(); conn.close()
     return {"recipes": [dict(r) for r in recipes]}
 
@@ -232,13 +262,16 @@ def delete_expense(expense_id: int, user_id: int=1):
     return {"message": "Deleted"}
 
 @app.post("/api/orders")
-def add_order(order: Order, user_id: int=1):
+@app.post("/api/orders")
+def add_order(order: Order, user_id: int = 1):
     conn = get_db(); c = conn.cursor()
     c.execute("SELECT price FROM products WHERE id=?", (order.product_id,))
     p = c.fetchone()
     if not p: raise HTTPException(404)
     price = p[0]
-    c.execute("INSERT INTO orders (user_id, product_id, quantity, price) VALUES (?,?,?,?)", (user_id, order.product_id, order.quantity, price))
+    # Use user_id from query parameter (default 1)
+    c.execute("INSERT INTO orders (user_id, product_id, quantity, price) VALUES (?,?,?,?)", 
+              (user_id, order.product_id, order.quantity, price))
     conn.commit(); conn.close()
     return {"message": "Order placed"}
 
